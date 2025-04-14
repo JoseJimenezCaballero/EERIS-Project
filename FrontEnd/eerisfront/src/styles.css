@@ -1,0 +1,51 @@
+body{
+ background-color: #FFFF;   
+ font-family: "Montserrat", sans-serif;
+}
+
+.NavBar-container{
+    background-color: #007AFF;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 4.5em;
+
+}
+
+.NavBar-text{
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5.9em;
+    padding-left: 1.5em;
+}
+
+.NavBar-title{
+    margin: 0;
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+.NavBar-links{
+    margin: 0;
+    font-weight:lighter;
+    font-size: 1.2em;
+}
+
+.NavBar-LoginBTN{
+    display: flex;
+    color: #070707;
+    background-color: white;
+    font-size: 1.2em;
+    height: 2.0em;
+    justify-content: center;
+    align-items: center;
+    border-radius: 1em;
+    width: 5.5em;
+    font-weight: 600;
+    margin-right: 1.5em;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+    
+}
