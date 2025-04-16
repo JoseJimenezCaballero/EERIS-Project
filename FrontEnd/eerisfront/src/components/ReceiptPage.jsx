@@ -58,13 +58,22 @@ const ReceiptPage = () => {
           />
 
           <label>Category</label>
-          <input
-            type="text"
+          <select
             name="category"
             value={receiptData.category}
             onChange={handleChange}
             required
-          />
+          >
+            <option value="">-- Select a category --</option>
+            <option value="Food">Food</option>
+            <option value="Merchandise">Merchandise</option>
+            <option value="Supplies">Supplies</option>
+            <option value="Software">Software</option>
+            <option value="Bills">Bills</option>
+          </select>
+
+
+
 
 
           <label>Amount</label>
