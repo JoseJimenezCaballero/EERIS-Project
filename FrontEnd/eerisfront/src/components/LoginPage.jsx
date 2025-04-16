@@ -18,7 +18,7 @@ const LoginPage = () => {
       // Mock user ID for now:
       const mockUserId = 'demoUser123';
       setUserId(mockUserId);
-      navigate('/HomePage');
+      navigate('/home');
     } catch (err) {
       console.error('Login failed:', err);
     }
