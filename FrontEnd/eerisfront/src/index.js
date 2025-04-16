@@ -4,9 +4,11 @@ import { UserProvider } from './components/UserContext';
 import ReactDOM from 'react-dom/client';
 import './styles.css';
 import ManagerApprovalPage from './components/ManagerApprovalPage';
+import Login from './components/LoginPage'
 
 
 const router = createBrowserRouter([
+  {path:'/login', element:<Login />},
   {path:'/approveTransactions', element:<ManagerApprovalPage />},
 
 ]);
