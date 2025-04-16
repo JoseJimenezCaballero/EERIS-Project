@@ -6,6 +6,9 @@ import '../styles.css';
 const HomePage = () => {
   const navigate = useNavigate();
 
+  // Replace this with fetched data later
+  const transactions = [];
+
   const handleSubmitClick = () => {
     navigate('/receipts');
   };
@@ -17,6 +20,7 @@ const HomePage = () => {
         <h1 className="home-title">Hello Employee!</h1>
 
         <div className="home-main">
+          {/* Transactions Widget */}
           <div className="home-transactions">
             <table className="home-table">
               <thead>
@@ -24,12 +28,26 @@ const HomePage = () => {
                   <th>Date</th>
                   <th>Business</th>
                   <th>Amount</th>
+                  <th>Category</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td colSpan="3" style={{ textAlign: 'center', padding: '2rem' }}></td>
-                </tr>
+                {transactions.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" style={{ textAlign: 'center', padding: '2rem' }}>
+                      No transactions yet.
+                    </td>
+                  </tr>
+                ) : (
+                  transactions.map((txn, index) => (
+                    <tr key={index}>
+                      <td>{txn.date}</td>
+                      <td>{txn.business}</td>
+                      <td>${parseFloat(txn.amount).toFixed(2)}</td>
+                      <td>{txn.category}</td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
 
@@ -38,12 +56,13 @@ const HomePage = () => {
             </button>
           </div>
 
-          <div className="home-budget"> //cambiar. todos los settings estan based en la imagen 
+          {/* Budget Widget */}
+          <div className="home-budget">
             <h3>Budget</h3>
             <div className="budget-circle">
-              <div className="budget-percent">80%</div>  
+              <div className="budget-percent">80%</div>
             </div>
-            <p>$80 / $100</p> 
+            <p>$80 / $100</p>
             <p>66 Transactions</p>
           </div>
         </div>
