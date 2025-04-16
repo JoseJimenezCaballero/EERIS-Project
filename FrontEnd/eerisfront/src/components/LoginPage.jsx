@@ -13,7 +13,7 @@ const LoginPage = () => {
     e.preventDefault();
     // mock login for now
     setUserId('demoUserId');
-    navigate('/approveTransactions');
+    navigate('/Home');
   };
 
   return (
