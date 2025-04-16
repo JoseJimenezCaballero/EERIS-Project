@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from './UserContext';
-import '../styles.css'; // ✅ Make sure this is the correct path
+import NavBar from './NavBar';
+import '../styles.css';
 
 const LoginPage = () => {
   const { setUserId } = useUser();
@@ -11,39 +12,49 @@ const LoginPage = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    // mock login for now
-    setUserId('demoUserId');
-    navigate('/Home');
+    try {
+      // Replace this with your backend call
+      // Example: const response = await fetch('http://localhost:5000/login', { ... })
+      // Mock user ID for now:
+      const mockUserId = 'demoUser123';
+      setUserId(mockUserId);
+      navigate('/Home');
+    } catch (err) {
+      console.error('Login failed:', err);
+    }
   };
 
   return (
-    <div className="login-container">
-      <form className="login-box" onSubmit={handleLogin}>
-        <h2>LOG IN</h2>
+    <>
+      <NavBar />
+      <div className="login-container">
+        <form className="login-box" onSubmit={handleLogin}>
+          <h2>LOG IN</h2>
 
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-        <label htmlFor="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
-        <button type="submit">LOG IN</button>
-      </form>
-    </div>
+          <button type="submit">LOG IN</button>
+        </form>
+      </div>
+    </>
   );
 };
 
