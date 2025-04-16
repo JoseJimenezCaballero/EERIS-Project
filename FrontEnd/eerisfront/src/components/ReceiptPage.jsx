@@ -6,6 +6,7 @@ const ReceiptPage = () => {
   const [receiptData, setReceiptData] = useState({
     date: '',
     business: '',
+    category: '',
     amount: '',
   });
 
@@ -55,6 +56,16 @@ const ReceiptPage = () => {
             onChange={handleChange}
             required
           />
+
+          <label>Category</label>
+          <input
+            type="text"
+            name="category"
+            value={receiptData.category}
+            onChange={handleChange}
+            required
+          />
+
 
           <label>Amount</label>
           <input
