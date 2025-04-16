@@ -1,8 +1,15 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import NavBar from './NavBar';
 import '../styles.css';
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  const handleSubmitClick = () => {
+    navigate('/receipts');
+  };
+
   return (
     <>
       <NavBar />
@@ -20,24 +27,23 @@ const HomePage = () => {
                 </tr>
               </thead>
               <tbody>
-                {/* Placeholder row */}
                 <tr>
-                  <td colSpan="3" style={{ textAlign: 'center', padding: '2rem' }}>
-                    {/* You can map transactions here later */}
-                  </td>
+                  <td colSpan="3" style={{ textAlign: 'center', padding: '2rem' }}></td>
                 </tr>
               </tbody>
             </table>
 
-            <button className="submit-button">Submit New Transaction</button>
+            <button className="submit-button" onClick={handleSubmitClick}>
+              Submit New Transaction
+            </button>
           </div>
 
-          <div className="home-budget">
+          <div className="home-budget"> //cambiar. todos los settings estan based en la imagen 
             <h3>Budget</h3>
             <div className="budget-circle">
-              <div className="budget-percent">80%</div>
+              <div className="budget-percent">80%</div>  
             </div>
-            <p>$80 / $100</p>
+            <p>$80 / $100</p> 
             <p>66 Transactions</p>
           </div>
         </div>
