@@ -1,11 +1,12 @@
 import NavBar from './NavBar';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {ReactComponent as Fileplus} from '../images/filePlus.svg'
 import {ReactComponent as FileMinus} from '../images/fileMinus.svg'
 import {ReactComponent as FilePencil} from '../images/filePencil.svg'
 import Employee from './Employee';
 import ModifyEmployee from './ModifyEmployee';
 import {ReactComponent as Pencil} from '../images/pencil.svg'
+import { useUser } from './UserContext';
 
 function HRPage() {
     const [choice, setChoice] = useState("add");
@@ -17,7 +18,34 @@ function HRPage() {
     const [budget, setBudget] = useState('');
     const [empId, setEmpId] = useState('');
     const [role, setRole] = useState('');
+    const [employees, setEmployees] = useState([]);
 
+    const { userId } = useUser();
+
+    useEffect(() => { //for remove components
+      if (choice !== 'remove') return;
+
+      const fetchEmployees = async () => {
+        try {
+          const res = await fetch('', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId }),
+          });
+
+          if (!res.ok) throw new Error('Failed to fetch employees');
+
+          const data = await res.json(); // expected: array of employees
+          setEmployees(data);
+        } catch (err) {
+          console.error('Error loading employees:', err);
+        }
+      };
+
+      fetchEmployees();
+    }, [userId, choice]);
 
     const handleSubmit = async () => {
         try {
@@ -32,6 +60,7 @@ function HRPage() {
               email,
               budget,
               empId,
+              role,
             }),
           });
     
@@ -50,14 +79,6 @@ function HRPage() {
         }
       };
 
-
-
-//**TEST DATA FOR EMPLOYEE COMPONENTS **/
-const data = [
-    {empId:1, employee:'Luis J.', role:'Manager'},
-    {empId:13, employee:'Jane J.', role:'Manager'},
-    {empId:11, employee:'Jose J.', role:'Employee'},
-];
 
 //**TEST DATA FOR MODEMPLOYEE COMPONENTS **/
 const data2 = [
@@ -148,7 +169,7 @@ const handleEditClick = (emp) => { //for the modification module when clicked
                             </form>
                             )}
                             {choice === 'remove' && (
-                                    data.map((emp, index) => {
+                                    employees.map((emp, index) => {
                                         return <Employee 
                                             key={index}
                                             empId={emp.empId}
@@ -158,7 +179,7 @@ const handleEditClick = (emp) => { //for the modification module when clicked
                                     })
                             )}
                             {choice === 'modify' && (
-                            data2.map((emp, index) => (
+                            employees.map((emp, index) => (
                                 <div key={index} className='modifyContainer'>
                                 <ModifyEmployee
                                     firstName={emp.firstName}

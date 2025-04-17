@@ -1,29 +1,39 @@
-// UserContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [userId, setUserIdState] = useState(null);
+  const [role, setRoleState] = useState(null); // ✅ new state for role
 
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
+    const storedRole = localStorage.getItem("role");
+
     if (storedUserId) {
       setUserIdState(storedUserId);
+    }
+
+    if (storedRole) {
+      setRoleState(storedRole);
     }
   }, []);
 
   const setUserId = (id) => {
     setUserIdState(id);
-    localStorage.setItem("userId", id); // ✅ store in localStorage
+    localStorage.setItem("userId", id);
+  };
+
+  const setRole = (newRole) => {
+    setRoleState(newRole);
+    localStorage.setItem("role", newRole);
   };
 
   return (
-    <UserContext.Provider value={{ userId, setUserId }}>
-      {children} {/*We are saying all the components wrapped by UserContext will have access to the userId and the setter */}
+    <UserContext.Provider value={{ userId, setUserId, role, setRole }}>
+      {children}
     </UserContext.Provider>
   );
 };
 
-export const useUser = () => useContext(UserContext);//now all children components can use the context by 
-                                                    //calling the custom hook useUser()
+export const useUser = () => useContext(UserContext);

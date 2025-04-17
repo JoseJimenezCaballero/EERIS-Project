@@ -5,22 +5,37 @@ import NavBar from './NavBar';
 import '../styles.css';
 
 const LoginPage = () => {
-  const { setUserId } = useUser();
+  const { setUserId, setRole } = useUser();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     try {
-      // Replace this with your backend call
-      // Example: const response = await fetch('http://localhost:5000/login', { ... })
-      // Mock user ID for now:
-      const mockUserId = 'demoUser123';
-      setUserId(mockUserId);
+      const res = await fetch('', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!res.ok) throw new Error('Login failed');
+
+      const data = await res.json();
+
+      // ✅ Assume backend responds with: { userId: 'abc123', role: 'manager' }
+      setUserId(data.userId);
+      setRole(data.role);
       navigate('/home');
     } catch (err) {
       console.error('Login failed:', err);
+      setRole('employee');
+      setUserId('test');
+      navigate('/home');
+      alert('Invalid credentials. Please try again.');
     }
   };
 

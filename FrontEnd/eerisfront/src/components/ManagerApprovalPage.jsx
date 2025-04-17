@@ -3,44 +3,96 @@ import {ReactComponent as Fileplus} from '../images/filePlus.svg'
 import {ReactComponent as FileMinus} from '../images/fileMinus.svg'
 import {ReactComponent as FilePencil} from '../images/filePencil.svg'
 import Transaction from './Transaction';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Summary from './Sumarry';
 import Adjust from './Adjust';
-
-//**TEST DATA FOR TRANSACTION COMPONENT **/
-const data = [
-  {date:'12/10/25', employee:'Jose J.', amount:'$10'},
-  {date:'12/09/25', employee:'Luis J.', amount:'$30'},
-  {date:'12/07/25', employee:'Alex J.', amount:'$50'},
-  {date:'12/07/25', employee:'Alex J.', amount:'$50'},
-  {date:'12/07/25', employee:'Alex J.', amount:'$50'},
-  {date:'12/07/25', employee:'Alex J.', amount:'$50'},
-  {date:'12/07/25', employee:'Alex J.', amount:'$50'},
-  {date:'12/07/25', employee:'Alex J.', amount:'$50'},
-  {date:'12/07/25', employee:'Alex J.', amount:'$50'},
-];
-
-//**TEST DATA FOR SUMMARY COMPONENT **/
-const data2 = [
-  {date:'December', employee:'Jose J.', amount:'$130'},
-  {date:'December', employee:'Alex J.', amount:'$170'},
-  {date:'November', employee:'Alex J.', amount:'$90'},
-  {date:'November', employee:'Luis J.', amount:'$910'},
-];
-
-//**TEST DATA FOR ADJUST COMPONENT **/
-
-  const data3 = [
-    {employee:'Jose J.', budget:300},
-    {employee:'Alex J.', budget:200},
-    {employee:'Luis J.', budget:350},
-  ];
-
+import { useUser } from './UserContext';
 
 
 function ManagerApprovalPage() {
+  const { userId } = useUser();
   const [choice, setChoice] = useState("approve");
-  console.log(choice)
+  const [transactions, setTransactions] = useState([]);
+  const [summaryData, setSummaryData] = useState([]);
+  const [adjustData, setAdjustData] = useState([]);
+
+  useEffect(() => { //for transactions
+    if (choice !== 'approve') return; // ✅ only fetch if approve is selected
+
+    const fetchTransactions = async () => {
+      try {
+        const res = await fetch('', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId }),
+        });
+
+        if (!res.ok) throw new Error('Failed to fetch transactions');
+
+        const data = await res.json(); // expected: array of {date, employee, amount}
+        setTransactions(data); // or setTransactions(data.transactions) if wrapped
+      } catch (err) {
+        console.error('Error loading transactions:', err);
+      }
+    };
+
+    fetchTransactions();
+  }, [userId, choice]);
+
+  
+  useEffect(() => {//for summary
+    if (choice !== 'summary') return;
+  
+    const fetchSummaryData = async () => {
+      try {
+        const res = await fetch('', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId }),
+        });
+  
+        if (!res.ok) throw new Error('Failed to fetch summary data');
+  
+        const data = await res.json(); // expected: [{ empId, date, employee, amount }]
+        setSummaryData(data);
+      } catch (err) {
+        console.error('Error loading summary data:', err);
+      }
+    };
+  
+    fetchSummaryData();
+  }, [userId, choice]);
+
+
+  useEffect(() => {
+    if (choice !== 'adjust') return;
+  
+    const fetchAdjustData = async () => {
+      try {
+        const res = await fetch('', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ userId }),
+        });
+  
+        if (!res.ok) throw new Error('Failed to fetch adjust data');
+  
+        const data = await res.json(); // expected: [{ empId, employee, budget }]
+        setAdjustData(data);
+      } catch (err) {
+        console.error('Error loading adjust data:', err);
+      }
+    };
+  
+    fetchAdjustData();
+  }, [userId, choice]);
+
 
   return (
     <div className="">
@@ -72,27 +124,30 @@ function ManagerApprovalPage() {
                     </div>
                     <div className="body">
                       {choice === 'approve' ? (
-                        data.map((trans, index) => (
+                        transactions.map((trans, index) => (
                           <Transaction /* NEEDS TRANS ID */
-                            key={index}
+                            key={trans.transId || index}
+                            transId={trans.transId}
                             date={trans.date}
                             employee={trans.employee}
                             amount={trans.amount}
                           />
                         ))
                       ) : choice === 'summary' ? (
-                        data2.map((empData, index) => (
+                        summaryData.map((empData, index) => (
                           <Summary /* NEEDS EMP ID */
-                            key={index}
+                            key={index || empData.empId}
+                            empId={empData.empId}
                             date={empData.date}
                             employee={empData.employee}
                             amount={empData.amount}
                           />
                         ))
                       ) : (
-                        data3.map((empData, index) => (
+                        adjustData.map((empData, index) => (
                           <Adjust /* NEEDS EMP ID */
                             key={index}
+                            empId={empData.empId}
                             employee={empData.employee}
                             amount={empData.budget}
                           />

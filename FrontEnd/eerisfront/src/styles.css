@@ -373,10 +373,11 @@ body{
     background-color: #e3e2e2;
     border-radius: 2rem;
     padding: 2rem;
-    width: 30rem;
+    width: 40rem;
     display: flex;
     flex-direction: column;
     align-items: center;
+    
   }
   
   .home-table {
@@ -386,6 +387,14 @@ body{
     border-collapse: collapse;
     overflow: hidden;
   }
+
+  .table-container{
+    max-height: 30em; /* adjust height as needed */
+    overflow-y: auto;
+    overflow-x: hidden;
+    border-radius: 1rem;
+    width: 100%;
+  }
   
   .home-table th, .home-table td {
     padding: 1rem;
@@ -394,6 +403,7 @@ body{
   }
   
   .submit-button {
+    font-family: "Montserrat", sans-serif;
     margin-top: 1.5rem;
     background-color: #44E07E;
     color: white;
@@ -406,6 +416,9 @@ body{
   }
   
   .home-budget {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     background-color: #e3e2e2;
     border-radius: 2rem;
     padding: 2rem;
@@ -495,6 +508,7 @@ body{
   }
   
   .submit-button {
+    font-family: "Montserrat", sans-serif;
     background-color: #44E07E;
     color: white;
     padding: 0.8rem;

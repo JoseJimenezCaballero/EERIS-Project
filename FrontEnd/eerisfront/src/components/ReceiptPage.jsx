@@ -1,14 +1,49 @@
 import React, { useState } from 'react';
 import NavBar from './NavBar';
-import '../styles.css';
+import { useUser } from './UserContext'; // ✅ import context
 
 const ReceiptPage = () => {
+  const { userId } = useUser(); // ✅ get userId from context
+
   const [receiptData, setReceiptData] = useState({
     date: '',
     business: '',
     category: '',
     amount: '',
   });
+
+
+//handle file upload + OCR fetch
+const handleFileChange = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append('file', file);      // append the file
+  formData.append('userId', userId);  // append the userId
+
+  try {
+    const res = await fetch('', {
+      method: 'POST',
+      body: formData, // no content-type, let browser set it
+    });
+
+    if (!res.ok) throw new Error('Failed to parse receipt image');
+
+    const data = await res.json();
+
+    //populate fields from backend response
+    setReceiptData((prev) => ({
+      ...prev,
+      ...data,
+    }));
+
+    //show success alert
+    alert('Receipt image parsed successfully! Please review the details.');
+  } catch (error) {
+    console.error('Error uploading file:', error);
+  }
+};
 
   const handleChange = (e) => {
     setReceiptData({
@@ -17,10 +52,38 @@ const ReceiptPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Transaction submitted:', receiptData);
-    // TODO: Send to backend
+
+    const dataToSend = {
+      ...receiptData,
+      userId, // ✅ include userId in request body
+    };
+
+    try {
+      const res = await fetch('', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      if (!res.ok) throw new Error('Failed to submit receipt');
+
+      const result = await res.json();
+      console.log('Transaction submitted:', result);
+
+      //reset form
+      setReceiptData({
+        date: '',
+        business: '',
+        category: '',
+        amount: '',
+      });
+    } catch (error) {
+      console.error('Submission error:', error);
+    }
   };
 
   return (
@@ -32,7 +95,7 @@ const ReceiptPage = () => {
           <div className="upload-icon">📤</div>
           <h3>Upload Receipt Image Here</h3>
           <p>We will parse some info automatically. Any remaining info will need to be filled manually.</p>
-          <input type="file" className="file-input" />
+          <input type="file" className="file-input" onChange={handleFileChange}/>
         </div>
 
         {/* Form */}
