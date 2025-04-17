@@ -7,12 +7,15 @@ import ManagerApprovalPage from './components/ManagerApprovalPage';
 import Login from './components/LoginPage'
 import HomePage from './components/HomePage';
 import ReceiptPage from './components/ReceiptPage';
+import HRPage from './components/HRPage';
 
 const router = createBrowserRouter([
   {path:'/login', element:<Login />},
+  {path:'/', element:<Login />},
   {path:'/approveTransactions', element:<ManagerApprovalPage />},
   { path: '/home', element: <HomePage /> },
   {path: '/receipts', element: <ReceiptPage /> },
+  {path: '/hrpage', element: <HRPage /> },
 
 ]);
 

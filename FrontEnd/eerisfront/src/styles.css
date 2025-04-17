@@ -505,3 +505,96 @@ body{
     margin-top: 1rem;
   }
   
+  .addEmployee{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #007AFF;
+    width: 85%;
+    border-radius: 2.5em;
+    height: 2.8em;
+
+}
+
+.plusSpanHR{
+  padding-right: 4.5em;
+}
+
+.summaryHR{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #FF6B6B;
+  width: 85%;
+  border-radius: 2.5em;
+  height: 2.8em;
+}
+
+.minusSpanHR{
+  padding-right: 3.5em;
+}
+
+.pencilSpanHR{
+  padding-right: 3.8em;
+}
+
+.hrSubmitBtn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #44E07E;
+  height: 2.3em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  color: #F7F7F7;
+  width: 12em;
+  border-radius: 2em;
+  font-size: 1.3em;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.addform{
+  all: unset;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 2.4em;
+  margin-top: 0.5em;
+}
+
+.addInput{
+  all: unset;
+  border-bottom: 2px solid #888;
+  width: 18em;
+  font-size: 1.3em;
+  font-weight: 250;
+  padding-bottom: 0.33em; /* ✅ adds space between text and bottom border */
+}
+
+.trashIcon{
+  display: flex;
+  height: 2.2em;
+  width: 2.2em;
+  margin-left: 3em;
+  padding-bottom: 0.1em;
+}
+
+.modifyContainer{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.transDataHR{
+  border: 0.096em solid black;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 1.3em;
+  width: 78%;
+  height: 2.5em;
+  border-radius: 0.6em;
+}
