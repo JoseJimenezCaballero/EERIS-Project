@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request
 from db import (
-    add_transaction, get_transaction_by_receipt,
+    add_transaction, get_receipt_by_id,
     list_transactions, list_transactions_by_employee,
     update_transaction, update_transaction_by_id
 )
@@ -47,7 +47,7 @@ def all_transactions():
 # ✅ Update pending transaction only
 @router.patch("/update/{receipt_id}")
 def update_txn(receipt_id: str, update_data: dict):
-    txn = get_transaction_by_receipt(receipt_id)
+    txn = get_receipt_by_id(receipt_id)
     if not txn:
         raise HTTPException(status_code=404, detail="Transaction not found")
     if txn["status"] != "pending":

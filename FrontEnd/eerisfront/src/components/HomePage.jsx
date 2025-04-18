@@ -15,7 +15,7 @@ const HomePage = () => {
   useEffect(() => {//useffect hook will call back end for users name with userId and get all recent transactions
     const fetchUserName = async () => {
       try {
-        const res = await fetch('', {
+        const res = await fetch('http://127.0.0.1:8000/api/auth/get-name', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

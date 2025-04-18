@@ -14,7 +14,7 @@ const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch('', {
+      const res = await fetch('http://127.0.0.1:8000/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,14 +27,12 @@ const LoginPage = () => {
       const data = await res.json();
 
       // ✅ Assume backend responds with: { userId: 'abc123', role: 'manager' }
+      console.log(data.userId, data.role)
       setUserId(data.userId);
       setRole(data.role);
       navigate('/home');
     } catch (err) {
       console.error('Login failed:', err);
-      setRole('employee');
-      setUserId('test');
-      navigate('/home');
       alert('Invalid credentials. Please try again.');
     }
   };

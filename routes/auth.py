@@ -18,7 +18,7 @@ def login(credentials: dict):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     return {
-    "username": user.get("username"),
+    "userId": user.get("username"),
     "role": user.get("role"),
     "email": user.get("email"),
     "firstName": user.get("firstName"),
