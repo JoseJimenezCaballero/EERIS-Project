@@ -16,33 +16,36 @@ const ReceiptPage = () => {
 //handle file upload + OCR fetch
 const handleFileChange = async (e) => {
   const file = e.target.files[0];
-  // --- ADD CHECK FOR USER ---
-  if (!file || !user || !user.userId) {
-      alert("Please log in before uploading a receipt."); // Or handle appropriately
-      return;
+  if (!file || !user?.email) {
+    alert("Please log in before uploading a receipt.");
+    return;
   }
-  // --- END CHECK ---
 
   const formData = new FormData();
   formData.append('file', file);
-  // --- CORRECTED USERID ACCESS ---
-  formData.append('userId', user.userId); // Access userId from user object
-  // --- END CORRECTION ---
+  formData.append('userId', user.email);
 
   try {
-    // Reminder: URL was previously empty here too. Make sure it's correct.
-    const res = await fetch('http://127.0.0.1:8000/api/receipts/upload', { // Ensure URL is correct
+    const res = await fetch('http://127.0.0.1:8000/api/receipts/upload-image', {
       method: 'POST',
       body: formData,
     });
 
     if (!res.ok) throw new Error('Failed to parse receipt image');
-    const data = await res.json();
-    setReceiptData((prev) => ({ ...prev, ...data }));
-    alert('Receipt image parsed successfully! Please review the details.');
+
+    const { parsed } = await res.json();
+
+    setReceiptData(prev => ({
+      ...prev,
+      business: parsed.business || '',
+      date: parsed.date || '',
+      amount: parsed.amount || ''
+    }));
+
+    alert('Receipt image parsed! Please confirm details and choose a category.');
   } catch (error) {
-    console.error('Error uploading file:', error);
-    alert(`Error parsing receipt: ${error.message}`);
+    console.error('Error parsing image:', error);
+    alert(`Failed to parse receipt: ${error.message}`);
   }
 };
 
