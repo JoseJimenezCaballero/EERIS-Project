@@ -32,7 +32,10 @@ transaction_data = {
     "employee": "jose@mail.com",
     "amount": 49.99,
     "status": "pending",
-    "department": "Engineering"
+    "department": "Engineering",
+    "date": "2025-04-18",      # <-- ADDED
+    "business": "Amazon",       # <-- ADDED
+    "category": "Merchandise"   # <-- ADDED (Choose appropriate category)
 }
 result = add_transaction(transaction_data)
 print("✅ Transaction inserted with _id:", result.inserted_id)

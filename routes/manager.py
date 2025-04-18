@@ -23,7 +23,7 @@ def budget_summary(email: str):
 
     budget = budget_data.get("allocated", 0)
 
-    # 🧮 Calculate total spent
+    #  Calculate total spent
     transactions = list_transactions_by_employee(email)
     total_spent = sum(txn.get("amount", 0) for txn in transactions if txn.get("status") == "approved")
 

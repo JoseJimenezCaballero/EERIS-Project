@@ -12,62 +12,81 @@ router = APIRouter()
 # ✅ Submit Receipt (Manual or OCR) - MODIFIED
 @router.post("/upload")
 async def upload_receipt(request: Request):
-    data = await request.json()
-    receipt_data = data.copy() # Keep original data for receipt
+    print("\n--- Received request for /upload ---")
+    try:
+        data = await request.json()
+        print(f"DEBUG: Received data: {data}")
+    except Exception as e:
+         raise HTTPException(status_code=400, detail=f"Invalid JSON body: {e}")
+
+    receipt_data = data.copy() # Keep original data for receipt processing
 
     # --- Prepare data for the receipt ---
-    owner_email = receipt_data.get("userId")
+    owner_email = receipt_data.get("userId") # Expecting userId from frontend
     if not owner_email:
          raise HTTPException(status_code=400, detail="Missing userId")
     receipt_data["owner"] = receipt_data.pop("userId") # Rename for receipt schema
 
     if "amount" in receipt_data:
-        receipt_data["total"] = float(receipt_data.pop("amount")) # Rename for receipt schema
+        try:
+            receipt_data["total"] = float(receipt_data.pop("amount")) # Rename & ensure float
+        except ValueError:
+             raise HTTPException(status_code=400, detail="Invalid amount format")
+    else:
+         raise HTTPException(status_code=400, detail="Missing amount")
+
 
     required_receipt_fields = ["owner", "business", "date", "total", "category"]
-    if not all(f in receipt_data for f in required_receipt_fields):
-        raise HTTPException(status_code=400, detail="Missing fields for receipt")
+    missing_fields = [f for f in required_receipt_fields if f not in receipt_data]
+    if missing_fields:
+        raise HTTPException(status_code=400, detail=f"Missing required fields for receipt: {', '.join(missing_fields)}")
 
     receipt_id = str(uuid.uuid4()) # Generate a unique ID
     receipt_data["receipt_id"] = receipt_id
-    receipt_data["status"] = "processed" # Or suitable initial status for receipt
+    receipt_data["status"] = "processed" # Or suitable initial status
 
     # --- Add the receipt ---
     try:
         receipt_result = add_receipt(receipt_data)
+        if not receipt_result.inserted_id:
+             raise Exception("Failed to insert receipt (no ID returned)")
     except Exception as e:
         # Handle potential database errors for adding receipt
         raise HTTPException(status_code=500, detail=f"Failed to add receipt: {e}")
 
     # --- Prepare data for the transaction ---
-    # Use data from the original request or the prepared receipt_data
     transaction_data = {
-        "employee": owner_email, # Use the email
+        "employee": owner_email, # Use the email from original userId field
         "receipt_id": receipt_id, # Link to the receipt
-        "amount": receipt_data["total"], # Use the numeric amount
+        "amount": receipt_data["total"], # Use the numeric amount saved in receipt
         "status": "pending", # Initial status for transactions needing approval
-        "date": receipt_data["date"], # Add date
-        "business": receipt_data["business"], # Add business
-        "category": receipt_data["category"] # Add category
+        "date": receipt_data["date"], # Add date from receipt
+        "business": receipt_data["business"], # Add business from receipt
+        "category": receipt_data["category"] # Add category from receipt
         # Add department if available/needed, maybe from user profile?
         # "department": "Default"
     }
 
     required_transaction_fields = ["employee", "receipt_id", "amount", "status", "date", "business", "category"]
-    if not all(f in transaction_data for f in required_transaction_fields):
+    missing_tx_fields = [f for f in required_transaction_fields if f not in transaction_data or transaction_data[f] is None]
+    if missing_tx_fields:
          # This shouldn't happen if receipt fields were present, but good check
-        raise HTTPException(status_code=500, detail="Missing derived fields for transaction")
+        raise HTTPException(status_code=500, detail=f"Missing derived fields for transaction: {', '.join(missing_tx_fields)}")
 
     # --- Add the transaction ---
     try:
-        transaction_result = add_transaction(transaction_data)
+        transaction_result = add_transaction(transaction_data) # CALL add_transaction
+        if not transaction_result.inserted_id:
+             raise Exception("Failed to insert transaction (no ID returned)")
     except Exception as e:
          # Handle potential database errors for adding transaction
-         # Consider how to handle failure here (e.g., delete the receipt?)
-         raise HTTPException(status_code=500, detail=f"Failed to add transaction: {e}")
+         # Consider how to handle failure here (e.g., log error, maybe delete the receipt?)
+         # For now, raise an error indicating transaction failed
+         raise HTTPException(status_code=500, detail=f"Receipt added, but failed to add corresponding transaction: {e}")
 
-
+    # Return success with IDs from both operations
     return {
+        "message": "Receipt and transaction submitted successfully",
         "receipt_inserted_id": str(receipt_result.inserted_id),
         "transaction_inserted_id": str(transaction_result.inserted_id),
         "receipt_id": receipt_id

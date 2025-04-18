@@ -65,11 +65,9 @@ const handleSubmit = async (e) => {
 
 
   const dataToSend = {
-    ...receiptData,
-    // --- CORRECTED USERID ACCESS ---
-    userId: user.userId, // Access userId from user object
-    // --- END CORRECTION ---
-  };
+      ...receiptData,
+      userId: user.email, // ✅ Use email for consistency
+    };
 
   try {
     const res = await fetch('http://127.0.0.1:8000/api/receipts/upload', { // Ensure URL is correct
