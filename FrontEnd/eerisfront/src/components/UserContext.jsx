@@ -1,36 +1,34 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
+
 const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
-  const [userId, setUserIdState] = useState(null);
-  const [role, setRoleState] = useState(null); // ✅ new state for role
+  // Store the whole user object, or specific fields
+  const [user, setUserState] = useState(null);
 
   useEffect(() => {
-    const storedUserId = localStorage.getItem("userId");
-    const storedRole = localStorage.getItem("role");
-
-    if (storedUserId) {
-      setUserIdState(storedUserId);
-    }
-
-    if (storedRole) {
-      setRoleState(storedRole);
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUserState(JSON.parse(storedUser));
     }
   }, []);
 
-  const setUserId = (id) => {
-    setUserIdState(id);
-    localStorage.setItem("userId", id);
+  const setUser = (userData) => {
+    setUserState(userData);
+    // Store necessary info in localStorage, potentially as JSON string
+    localStorage.setItem("user", JSON.stringify(userData));
   };
 
-  const setRole = (newRole) => {
-    setRoleState(newRole);
-    localStorage.setItem("role", newRole);
-  };
+  const logout = () => {
+     setUserState(null);
+     localStorage.removeItem("user");
+     // Optionally clear other storage too
+  }
 
+  // Provide user object, setUser function, and logout function
   return (
-    <UserContext.Provider value={{ userId, setUserId, role, setRole }}>
+    <UserContext.Provider value={{ user, setUser, logout }}>
       {children}
     </UserContext.Provider>
   );

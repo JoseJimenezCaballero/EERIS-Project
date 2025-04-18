@@ -5,31 +5,26 @@ import NavBar from './NavBar';
 import '../styles.css';
 
 const LoginPage = () => {
-  const { setUserId, setRole } = useUser();
+  const { setUser } = useUser(); // Get setUser from context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const res = await fetch('http://127.0.0.1:8000/api/auth/login', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
 
       if (!res.ok) throw new Error('Login failed');
+      const userData = await res.json(); // Backend returns user details
 
-      const data = await res.json();
+      // Store the received user data in context
+      setUser(userData); // Use the new setUser function
 
-      // ✅ Assume backend responds with: { userId: 'abc123', role: 'manager' }
-      console.log(data.userId, data.role)
-      setUserId(data.userId);
-      setRole(data.role);
       navigate('/home');
     } catch (err) {
       console.error('Login failed:', err);
