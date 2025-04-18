@@ -5,7 +5,11 @@ from db import (
     update_transaction,
     get_budget_by_employee,
     update_budget,
-    list_transactions
+    list_transactions,
+    get_transaction_by_id,
+    update_transaction_by_id,
+    list_users
+
 )
 
 router = APIRouter()
