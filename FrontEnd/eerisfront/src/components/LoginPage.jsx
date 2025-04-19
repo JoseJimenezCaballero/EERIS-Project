@@ -25,7 +25,14 @@ const LoginPage = () => {
       // Store the received user data in context
       setUser(userData); // Use the new setUser function
 
-      navigate('/home');
+      if (userData.role === 'Manager') {
+        navigate('/approveTransactions');
+      }else if (userData.role === 'HR') {
+        navigate('/hrpage');
+      }else {
+        navigate('/home');
+      }
+
     } catch (err) {
       console.error('Login failed:', err);
       alert('Invalid credentials. Please try again.');

@@ -16,69 +16,149 @@ function ManagerApprovalPage() {
   const [summaryData, setSummaryData] = useState([]);
   const [adjustData, setAdjustData] = useState([]);
 
-  useEffect(() => { //for transactions
-    if (choice !== 'approve') return; // ✅ only fetch if approve is selected
+  // useEffect(() => { //for transactions
+  //   if (choice !== 'approve') return; // ✅ only fetch if approve is selected
 
+  //   const fetchTransactions = async () => {
+  //     try {
+  //       const res = await fetch('', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ userId }),
+  //       });
+
+  //       if (!res.ok) throw new Error('Failed to fetch transactions');
+
+  //       const data = await res.json(); // expected: array of {date, employee, amount}
+  //       setTransactions(data); // or setTransactions(data.transactions) if wrapped
+  //     } catch (err) {
+  //       console.error('Error loading transactions:', err);
+  //     }
+  //   };
+
+  //   fetchTransactions();
+  // }, [userId, choice]);
+
+  useEffect(() => {
+    if (choice !== 'approve') return;
+  
     const fetchTransactions = async () => {
       try {
-        const res = await fetch('', {
-          method: 'POST',
+        const res = await fetch('http://127.0.0.1:8000/api/transactions/', {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId }),
+          }
         });
-
+  
         if (!res.ok) throw new Error('Failed to fetch transactions');
-
-        const data = await res.json(); // expected: array of {date, employee, amount}
-        setTransactions(data); // or setTransactions(data.transactions) if wrapped
+        const data = await res.json();
+  
+        // ✅ Filter only pending ones on frontend
+        const pendingTransactions = data.filter(txn => txn.status === 'pending');
+        setTransactions(pendingTransactions);
       } catch (err) {
         console.error('Error loading transactions:', err);
       }
     };
-
+  
     fetchTransactions();
-  }, [userId, choice]);
+  }, [choice]);
 
   
-  useEffect(() => {//for summary
+
+  // useEffect(() => {//for summary
+  //   if (choice !== 'summary') return;
+  
+  //   const fetchSummaryData = async () => {
+  //     try {
+  //       const res = await fetch('', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ userId }),
+  //       });
+  
+  //       if (!res.ok) throw new Error('Failed to fetch summary data');
+  
+  //       const data = await res.json(); // expected: [{ empId, date, employee, amount }]
+  //       setSummaryData(data);
+  //     } catch (err) {
+  //       console.error('Error loading summary data:', err);
+  //     }
+  //   };
+  
+  //   fetchSummaryData();
+  // }, [userId, choice]);
+
+
+  useEffect(() => {
     if (choice !== 'summary') return;
   
     const fetchSummaryData = async () => {
       try {
-        const res = await fetch('', {
-          method: 'POST',
+        const res = await fetch('http://127.0.0.1:8000/api/transactions/', {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId }),
+          }
         });
   
         if (!res.ok) throw new Error('Failed to fetch summary data');
   
-        const data = await res.json(); // expected: [{ empId, date, employee, amount }]
-        setSummaryData(data);
+        const data = await res.json();
+  
+        // ✅ Filter out only approved or rejected transactions
+        const filteredData = data.filter(txn => txn.status !== 'pending');
+        setSummaryData(filteredData);
       } catch (err) {
         console.error('Error loading summary data:', err);
       }
     };
   
     fetchSummaryData();
-  }, [userId, choice]);
+  }, [choice]);
 
+  
+
+  // useEffect(() => {
+  //   if (choice !== 'adjust') return;
+  
+  //   const fetchAdjustData = async () => {
+  //     try {
+  //       const res = await fetch('', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({ userId }),
+  //       });
+  
+  //       if (!res.ok) throw new Error('Failed to fetch adjust data');
+  
+  //       const data = await res.json(); // expected: [{ empId, employee, budget }]
+  //       setAdjustData(data);
+  //     } catch (err) {
+  //       console.error('Error loading adjust data:', err);
+  //     }
+  //   };
+  
+  //   fetchAdjustData();
+  // }, [userId, choice]);
 
   useEffect(() => {
     if (choice !== 'adjust') return;
   
     const fetchAdjustData = async () => {
       try {
-        const res = await fetch('', {
-          method: 'POST',
+        const res = await fetch('http://127.0.0.1:8000/api/budgets/', {
+          method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userId }),
+          }
         });
   
         if (!res.ok) throw new Error('Failed to fetch adjust data');
@@ -91,8 +171,8 @@ function ManagerApprovalPage() {
     };
   
     fetchAdjustData();
-  }, [userId, choice]);
-
+  }, [choice]);
+  
 
   return (
     <div className="">
