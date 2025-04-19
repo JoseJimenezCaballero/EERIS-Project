@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Request
+from bson import ObjectId
 from db import (
     add_transaction, get_receipt_by_id,
     list_transactions, list_transactions_by_employee,
@@ -21,11 +22,20 @@ def submit_transaction(data: dict):
 # ✅ Approve or Reject (Manager)
 @router.patch("/{receipt_id}/status")
 def change_status(receipt_id: str, update: dict):
+    print("incoming request to update: ", receipt_id)
+    print("with data:", update)
     status = update.get("status")
     if status not in ["approved", "rejected"]:
         raise HTTPException(status_code=400, detail="Invalid status")
+
+    try:
+        receipt_oid = ObjectId(receipt_id)    #--------------------------------
+    except:
+        raise HTTPException(status_code=400, detail="Invalid ObjectId")
+
     
-    update_transaction(receipt_id, {"status": status})
+    result = update_transaction(receipt_oid, {"status": status})
+    print("result of update: ", result.modified_count)
     return {"message": f"Transaction {status}"}
 
 # ✅ View all transactions for employee (email)

@@ -36,7 +36,19 @@ def get_transaction_by_id(tx_id): return transactions.find_one({"_id": ObjectId(
 def list_transactions(): return list(transactions.find())
 def list_transactions_by_employee(email): return list(transactions.find({"employee": email}))  # 🛠 used in receipts.py
 def list_pending_transactions(): return list(transactions.find({"status": "pending"}))
-def update_transaction(receipt_id, new_data): return transactions.update_one({"receipt_id": receipt_id}, {"$set": new_data})
+from bson import ObjectId
+
+def update_transaction(receipt_id, new_data):
+    try:
+        # Ensure receipt_id is an ObjectId
+        receipt_oid = ObjectId(receipt_id) if isinstance(receipt_id, str) else receipt_id
+    except Exception as e:
+        print("❌ Invalid ObjectId:", receipt_id)
+        return None
+
+    print("✅ Updating transaction with ID:", receipt_oid)
+    return transactions.update_one({ "_id": receipt_oid }, { "$set": new_data })
+
 def update_transaction_by_id(_id, new_data): return transactions.update_one({"_id": _id}, {"$set": new_data})
 def delete_transaction(receipt_id): return transactions.delete_one({"receipt_id": receipt_id})
 def list_transactions_by_department(dept_name): return list(transactions.find({"department": dept_name}))

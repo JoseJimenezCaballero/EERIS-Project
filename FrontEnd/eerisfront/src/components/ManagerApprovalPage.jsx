@@ -206,8 +206,8 @@ function ManagerApprovalPage() {
                       {choice === 'approve' ? (
                         transactions.map((trans, index) => (
                           <Transaction /* NEEDS TRANS ID */
-                            key={trans.transId || index}
-                            transId={trans.transId}
+                            key={trans._id || index}
+                            transId={trans._id}
                             date={trans.date}
                             employee={trans.employee}
                             amount={trans.amount}
