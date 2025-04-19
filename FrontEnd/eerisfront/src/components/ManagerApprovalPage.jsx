@@ -124,41 +124,17 @@ function ManagerApprovalPage() {
 
   
 
-  // useEffect(() => {
-  //   if (choice !== 'adjust') return;
-  
-  //   const fetchAdjustData = async () => {
-  //     try {
-  //       const res = await fetch('', {
-  //         method: 'POST',
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         },
-  //         body: JSON.stringify({ userId }),
-  //       });
-  
-  //       if (!res.ok) throw new Error('Failed to fetch adjust data');
-  
-  //       const data = await res.json(); // expected: [{ empId, employee, budget }]
-  //       setAdjustData(data);
-  //     } catch (err) {
-  //       console.error('Error loading adjust data:', err);
-  //     }
-  //   };
-  
-  //   fetchAdjustData();
-  // }, [userId, choice]);
-
   useEffect(() => {
     if (choice !== 'adjust') return;
   
     const fetchAdjustData = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/budgets/', {
-          method: 'GET',
+        const res = await fetch('http://127.0.0.1:8000/api/manager/adjust_data', {
+          method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-          }
+          },
+          body: JSON.stringify({ userId }),
         });
   
         if (!res.ok) throw new Error('Failed to fetch adjust data');
@@ -171,7 +147,36 @@ function ManagerApprovalPage() {
     };
   
     fetchAdjustData();
-  }, [choice]);
+  }, [userId, choice]);
+
+  // useEffect(() => {
+  //   if (choice !== 'adjust') return;
+  
+  //   const fetchAdjustData = async () => {
+  //     try {
+  //       const res = await fetch('http://127.0.0.1:8000/api/manager/adjust_budget', {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //         },
+  //         body: JSON.stringify({
+  //           empId: "jose@mail.com",
+  //           amount: 3000,
+  //         }),
+  //       });
+  
+  //       if (!res.ok) throw new Error('Failed to fetch adjust data');
+  
+  //       const data = await res.json(); // expected: [{ empId, employee, budget }]
+  //       console.log("Adjust Data:", data);
+  //       setAdjustData(data);
+  //     } catch (err) {
+  //       console.error('Error loading adjust data:', err);
+  //     }
+  //   };
+  
+  //   fetchAdjustData();
+  // }, [choice]);
   
 
   return (

@@ -6,30 +6,67 @@ function Adjust({ empId, employee, amount }) {
   const [newAmount, setNewAmount] = useState(amount);
   const [displayAmount, setDisplayAmount] = useState(amount); // ✅ amount to show
 
-  const handleSubmit = async () => {
-    if (!newAmount) return;
+  // const handleSubmit = async () => {
+  //   console.log("🎯 Submitting new budget for:", empId);    //----------------------------------------
+  //   if (!newAmount) return;
 
+  //   try {
+  //     const res = await fetch('http://localhost:8000/api/manager/adjust_budget', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({
+  //         empId,
+  //         amount: newAmount,
+  //       }),
+  //     });
+
+  //     const json = await res.json();   //-----------------------------------------
+  //     console.log("💬 Server response:", json);    //----------------------------------------
+  //     if (!res.ok) throw new Error('Failed to update amount');
+
+  //     // ✅ Update the displayed amount
+  //     setDisplayAmount(newAmount);
+  //     setIsEditing(false);
+  //     console.log(`Updated amount for ${employee} to ${newAmount}`);
+
+  //   } catch (error) {
+  //     console.error('Error updating amount:', error);
+  //   }
+  // };
+  
+  const handleSubmit = async () => {
+    console.log("🎯 Budget submit triggered with:", empId, newAmount);
+  
+    if (!newAmount) {
+      console.warn("⚠️ No amount entered.");
+      return;
+    }
+  
     try {
-      const res = await fetch('', {
-        method: 'POST',
+      const res = await fetch("http://localhost:8000/api/manager/adjust_budget", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           empId,
           amount: newAmount,
         }),
       });
-
-      if (!res.ok) throw new Error('Failed to update amount');
-
-      // ✅ Update the displayed amount
+  
+      console.log("📡 POST sent to /api/manager/adjust_budget");
+  
+      const result = await res.json();
+      console.log("💬 Response:", result);
+  
+      if (!res.ok) throw new Error("Failed to update amount");
+  
       setDisplayAmount(newAmount);
       setIsEditing(false);
-      console.log(`Updated amount for ${employee} to ${newAmount}`);
-
-    } catch (error) {
-      console.error('Error updating amount:', error);
+    } catch (err) {
+      console.error("❌ Error submitting budget:", err);
     }
   };
   

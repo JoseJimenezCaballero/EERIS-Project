@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from bson.objectid import ObjectId
+
+
 from db import (
     list_transactions_by_employee,
     update_transaction,
@@ -8,8 +10,8 @@ from db import (
     list_transactions,
     get_transaction_by_id,
     update_transaction_by_id,
-    list_users
-
+    list_users,
+    budgets
 )
 from db import get_employee_total_spending
 
@@ -57,22 +59,47 @@ def approve_by_transaction_id(data: dict):
 
 
 # ✅ Adjust budget (with guard to avoid underbudgeting)
-@router.patch("/adjust-budget/{employee_email}")
-def adjust_budget(employee_email: str, update: dict):
-    new_budget = update.get("budget")
-    if new_budget is None:
-        raise HTTPException(status_code=400, detail="Budget value required")
+# @router.patch("/adjust-budget/{employee_email}")
+# def adjust_budget(employee_email: str, update: dict):
+#     new_budget = update.get("budget")
+#     if new_budget is None:
+#         raise HTTPException(status_code=400, detail="Budget value required")
 
-    current_budget = get_budget_by_employee(employee_email)
-    if not current_budget:
-        raise HTTPException(status_code=404, detail="Employee budget not found")
+#     current_budget = get_budget_by_employee(employee_email)
+#     if not current_budget:
+#         raise HTTPException(status_code=404, detail="Employee budget not found")
 
-    total_spent = current_budget.get("spent", 0)
-    if new_budget < total_spent:
-        raise HTTPException(status_code=400, detail="New budget is below total spent")
+#     total_spent = current_budget.get("spent", 0)
+#     if new_budget < total_spent:
+#         raise HTTPException(status_code=400, detail="New budget is below total spent")
 
-    update_budget(employee_email, {"allocated": new_budget})
-    return {"message": "Budget updated"}
+#     update_budget(employee_email, {"allocated": new_budget})
+#     return {"message": "Budget updated"}
+
+@router.post("/adjust_data")
+def get_adjust_data(data: dict):
+    user_id = data.get("userId")
+    
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Missing userId")
+
+    print("📥 Received userId from frontend:", user_id)
+
+    # No filtering yet — just return all budgets for now
+    all_budgets = list(budgets.find({}))
+    result = []
+
+    for b in all_budgets:
+        result.append({
+            "empId": b.get("employee"),
+            "employee": b.get("employee"),
+            "budget": b.get("limit")
+        })
+
+    return result
+
+
+
 
 @router.patch("/adjust-budget-by-id")
 def adjust_budget_by_id(data: dict):

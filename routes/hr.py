@@ -3,63 +3,98 @@ from db import add_user, delete_user, list_users, get_user_by_email
 
 router = APIRouter()
 
-# ✅ Add a new employee with initial budget
-@router.post("/add-employee-ui")
-def add_employee_ui(user: dict):
-    required = ("firstName", "lastName", "email", "budget", "role", "empId")
-    if not all(k in user for k in required):
-        raise HTTPException(status_code=400, detail="Missing fields")
+@router.post("/add_employee")
+def add_employee(data: dict):
+    from db import add_user, add_budget
 
-    if get_user_by_email(user["email"]):
-        raise HTTPException(status_code=400, detail="Email already exists")
+    required_fields = ["firstName", "lastName", "email", "budget", "empId", "role"]
+    if not all(field in data for field in required_fields):
+        raise HTTPException(status_code=400, detail="Missing required fields")
 
-    new_user = {
-        "username": user["firstName"].lower() + user["lastName"].lower(),
-        "email": user["email"],
-        "password": "temp123",
-        "role": user["role"],
-        "allocated": float(user["budget"]),  # standardize to 'allocated'
-        "empId": user["empId"],
-        "firstName": user["firstName"],
-        "lastName": user["lastName"],
-        "active": True,
+    user_data = {
+        "username": data["empId"],
+        "email": data["email"],
+        "firstName": data["firstName"],
+        "lastName": data["lastName"],
+        "role": data["role"],
+        "password": "temp123"  # default, since frontend doesn’t supply it
+    }
+
+    budget_data = {
+        "employee": data["email"],
+        "limit": float(data["budget"]),
+        "remaining": float(data["budget"]),
         "department": "General"
     }
 
-    add_user(new_user)
-    return {"message": f"User {new_user['username']} added"}
+    add_user(user_data)
+    add_budget(budget_data)
+    return {"message": "Employee and budget added successfully"}
 
-
-# ✅ Delete an employee by email
-@router.delete("/remove-employee/{email}")
-def remove_employee(email: str):
-    result = delete_user(email)
-    if result.deleted_count == 0:
-        raise HTTPException(status_code=404, detail="User not found")
-    return {"message": "Employee deleted"}
 
 # ✅ List all employees only
-@router.get("/list-employees")
-def list_employees():
+@router.post("/list_employees")
+def list_employees(data: dict):
+    from db import list_users, get_budget_by_employee
+
     users = list_users()
-    employees = [u for u in users if u.get("role") == "employee"]
+    result = []
 
-    return [
-        {
-            "empId": u.get("empId"),
-            "employee": f"{u.get('firstName')} {u.get('lastName')[0]}.",
-            "role": u.get("role")
-        }
-        for u in employees
-    ]
+    for user in users:
+        if user.get("role") == "Manager" or user.get("role") == "Employee":
+            budget = get_budget_by_employee(user["email"]) or {}
+            result.append({
+                "empId": user.get("username"),
+                "employee": user.get("email"),
+                "role": user.get("role"),
+                "firstName": user.get("firstName"),
+                "lastName": user.get("lastName"),
+                "budget": budget.get("limit", 0)
+            })
+
+    return result
 
 
-@router.delete("/remove-employee-name/{name}")
-def remove_employee_by_name(name: str):
-    # Find employee where firstName + lastName match
-    for u in list_users():
-        full_name = f"{u.get('firstName')} {u.get('lastName')}".strip()
-        if full_name.lower() == name.strip().lower():
-            delete_user(u["email"])
-            return {"message": f"Deleted {full_name}"}
-    raise HTTPException(status_code=404, detail="User not found")
+
+@router.post("/delete_employee")
+def delete_employee(data: dict):
+    from db import list_users, delete_user, budgets
+
+    emp_id = data.get("empId")
+    if not emp_id:
+        raise HTTPException(status_code=400, detail="Missing empId")
+
+    # Find user by empId
+    user = next((u for u in list_users() if str(u.get("username")) == str(emp_id)), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    email = user["email"]
+    delete_user(email)
+    budgets.delete_one({"employee": email})
+
+    return {"message": f"Deleted employee {emp_id} ({email})"}
+
+
+
+
+@router.patch("/update_employee")
+def update_employee(data: dict):
+    from db import update_user, update_budget
+
+    email = data.get("email")
+    if not email:
+        raise HTTPException(status_code=400, detail="Missing email")
+
+    update_user(email, {
+        "firstName": data["firstName"],
+        "lastName": data["lastName"],
+        "username": data["empId"],
+        "role": data["role"]
+    })
+
+    update_budget(email, {
+        "allocated": float(data["budget"])
+    })
+
+    return {"message": f"Employee {email} updated successfully"}
