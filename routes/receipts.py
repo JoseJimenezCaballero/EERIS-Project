@@ -10,11 +10,11 @@ from PIL import Image
 import pytesseract
 import io
 import re
+import easyocr
 
 router = APIRouter()
+reader = easyocr.Reader(['en'], gpu=False)  # Use CPU
 
-
-# ✅ [1] OCR IMAGE UPLOAD: Receives file, returns parsed fields
 @router.post("/upload-image")
 async def upload_receipt_image(
     file: UploadFile = File(...),
@@ -23,28 +23,21 @@ async def upload_receipt_image(
     try:
         contents = await file.read()
         image = Image.open(io.BytesIO(contents))
-        text = pytesseract.image_to_string(image)
+        image.save("temp.jpg")  # Save temporarily for OCR
 
-        # --- OCR Debugging ---
-        print("\n--- OCR Output ---")
-        print(text)
-        print("------------------")
+        result = reader.readtext("temp.jpg", detail=0)
+        text = "\n".join(result)
 
-        # --- Extract Date (format: DD-MM-YYYY or YYYY-MM-DD or similar) ---
+        print("--- OCR TEXT ---\n", text)
+
+        # Extract fields from result
         date_match = re.search(r"\d{2}[-/]\d{2}[-/]\d{4}", text)
         date = date_match.group(0) if date_match else "N/A"
 
-        # --- Extract Amount (Look for line with AMOUNT and grab number nearby) ---
-        amount_match = re.search(r"(AMOUNT|Total|Balance).{0,20}?(\d+\.\d{2})", text, re.IGNORECASE)
-        amount = float(amount_match.group(2)) if amount_match else 0.0
+        numbers = re.findall(r"\d+\.\d{2}", text)
+        amount = max([float(n) for n in numbers]) if numbers else 0.0
 
-        # --- Extract Business Name (use top line or label “Receipt” as fallback) ---
-        lines = text.strip().split('\n')
-        business = "Unknown"
-        for line in lines:
-            if "receipt" not in line.lower() and line.strip():
-                business = line.strip()
-                break
+        business = result[0] if result else "Unknown"
 
         return {
             "parsed": {
@@ -56,9 +49,9 @@ async def upload_receipt_image(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"OCR processing failed: {e}")
-
-
+        print("EasyOCR Error:", e)
+        raise HTTPException(status_code=500, detail=f"OCR failed: {e}")
+    
 # ✅ [2] FINAL FORM SUBMISSION: Save receipt and transaction (manual or image-based)
 @router.post("/upload")
 async def upload_receipt(request: Request):

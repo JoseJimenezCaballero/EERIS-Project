@@ -47,6 +47,9 @@ def get_budget_by_employee(email): return budgets.find_one({"employee": email}) 
 def list_budgets(): return list(budgets.find())
 def update_budget(email, new_data): return budgets.update_one({"employee": email}, {"$set": new_data})
 def delete_budget(email): return budgets.delete_one({"employee": email})
-def get_employee_total_spending(username):
-    return sum(txn["amount"] for txn in transactions.find({"username": username, "status": "approved"}))
+def get_employee_total_spending(email):
+    return sum(txn.get("amount", 0) for txn in transactions.find({
+        "employee": email,
+
+    }))
 
