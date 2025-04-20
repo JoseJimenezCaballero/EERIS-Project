@@ -27,7 +27,7 @@ def budget_summary(email: str):
     if not budget_data:
         raise HTTPException(status_code=404, detail="Budget not found")
 
-    budget = budget_data.get("allocation", 0)
+    budget = budget_data.get("limit", 0)
 
     #  Calculate total spent
     total_spent = get_employee_total_spending(email)
@@ -101,7 +101,7 @@ def get_employee_budgets(data: dict):
             "empId": user.get("username"),         # keep this if needed for key
             "email": email,                        # ✅ ADD this line
             "employee": f"{user['firstName']} {user['lastName'][0]}.",
-            "budget": budget.get("allocation", 0)
+            "budget": budget.get("limit", 0)
         })
 
     return result
@@ -118,7 +118,7 @@ def adjust_budget(data: dict):
     if not email or amount is None:
         raise HTTPException(status_code=400, detail="email and amount are required")
 
-    update_budget(email, {"allocation": float(amount)})
+    update_budget(email, {"limit": float(amount)})
     return {"message": "Budget updated"}
 
 
