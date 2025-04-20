@@ -38,12 +38,19 @@ function Adjust({ empId, employee, amount }) {
   
   const handleSubmit = async () => {
     console.log("🎯 Budget submit triggered with:", empId, newAmount);
-  
-    if (!newAmount) {
+    
+    const numericAmount = parseFloat(newAmount);
+
+    if (!numericAmount) {
       console.warn("⚠️ No amount entered.");
       return;
     }
-  
+    
+    if (numericAmount < 0) {
+      alert("🚫 Budget amount cannot be negative.");
+      return;
+    }
+
     try {
       const res = await fetch("http://localhost:8000/api/manager/adjust-budget", {
         method: "PATCH",
@@ -52,7 +59,7 @@ function Adjust({ empId, employee, amount }) {
         },
         body: JSON.stringify({
           email: empId, 
-          amount: newAmount,
+          amount: numericAmount,
         }),
       });
   
@@ -63,7 +70,7 @@ function Adjust({ empId, employee, amount }) {
   
       if (!res.ok) throw new Error("Failed to update amount");
   
-      setDisplayAmount(newAmount);
+      setDisplayAmount(numericAmount);
       setIsEditing(false);
     } catch (err) {
       console.error("❌ Error submitting budget:", err);
@@ -78,6 +85,7 @@ function Adjust({ empId, employee, amount }) {
         {isEditing ? (
           <input
             type="number"
+            min="0"
             className="amountInput"
             value={newAmount}
             onChange={(e) => setNewAmount(e.target.value)}
