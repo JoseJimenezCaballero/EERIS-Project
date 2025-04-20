@@ -35,8 +35,8 @@ for emp in employees:
 
 # ✅ Add Budgets
 budgets = [
-    {"employee": "jose@example.com", "department": "Engineering", "limit": 1000, "remaining": 800},
-    {"employee": "jane@example.com", "department": "Design", "limit": 1200, "remaining": 1150}
+    {"employee": "jose@example.com", "department": "Engineering", "budget": 1000, "remaining": 800},
+    {"employee": "jane@example.com", "department": "Design", "allocated": 1200, "remaining": 1150}
 ]
 for b in budgets:
     add_budget(b)

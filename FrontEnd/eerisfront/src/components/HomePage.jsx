@@ -15,6 +15,29 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
 
+  const fetchBudgetInfo = async () => {
+    try {
+      // --- Use the correct GET endpoint with userEmail in the path ---
+      const res = await fetch(`http://127.0.0.1:8000/api/manager/budget-summary/${user.email}`, { // <-- CORRECTED URL and uses userEmail
+        method: 'GET', // <-- CHANGE TO GET
+        headers: { 'Content-Type': 'application/json' },
+        // NO body needed for GET request
+      });
+      // --- End endpoint correction ---
+
+      if (!res.ok) {
+         const errorData = await res.json().catch(() => ({ detail: 'Failed to fetch budget info' }));
+         throw new Error(`(${res.status}) ${errorData.detail || 'Failed to fetch budget info'}`);
+      }
+      const data = await res.json();
+      setBudget(data.budget || 0);
+      setTotalAmnt(data.totalSpent || 0);
+    } catch (fetchError) {
+      console.error('Error fetching budget info:', fetchError);
+      setError(prev => prev ? `${prev}\nFetch Budget Info Error: ${fetchError.message}` : `Fetch Budget Info Error: ${fetchError.message}`);
+    }
+  };
+
   useEffect(() => {
     // Ensure user object is loaded before fetching
     if (!user || !user.email || !user.userId) {
@@ -191,6 +214,9 @@ const HomePage = () => {
             <BudgetWheel percent={percent} />
             <p>${totalAmnt.toFixed(2)} / ${budget.toFixed(2)}</p>
             <p>{transactions.length} Transaction(s) this period</p>
+            <button className="refresh-button" onClick={fetchBudgetInfo}>
+              🔁 Refresh Budget
+            </button>
           </div>
         </div>
       </div>

@@ -57,7 +57,8 @@ def list_transactions_by_department(dept_name): return list(transactions.find({"
 def add_budget(data): return budgets.insert_one(data)
 def get_budget_by_employee(email): return budgets.find_one({"employee": email})  # 🛠 standardized on email
 def list_budgets(): return list(budgets.find())
-def update_budget(email, new_data): return budgets.update_one({"employee": email}, {"$set": new_data})
+def update_budget(email, new_data): 
+    return budgets.update_one({"employee": email}, {"$set": new_data}, upsert=True)
 def delete_budget(email): return budgets.delete_one({"employee": email})
 def get_employee_total_spending(email):
     return sum(txn.get("amount", 0) for txn in transactions.find({

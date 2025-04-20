@@ -45,18 +45,18 @@ function Adjust({ empId, employee, amount }) {
     }
   
     try {
-      const res = await fetch("http://localhost:8000/api/manager/adjust_budget", {
-        method: "POST",
+      const res = await fetch("http://localhost:8000/api/manager/adjust-budget", {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          empId,
+          email: empId, 
           amount: newAmount,
         }),
       });
   
-      console.log("📡 POST sent to /api/manager/adjust_budget");
+      console.log("📡 PATCH sent to /api/manager/adjust-budget");
   
       const result = await res.json();
       console.log("💬 Response:", result);
