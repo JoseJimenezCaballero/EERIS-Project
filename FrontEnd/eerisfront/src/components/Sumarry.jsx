@@ -2,7 +2,7 @@ import {ReactComponent as PDF} from '../images/pdf.svg'
 import {ReactComponent as ApproveFill} from '../images/approveFill.svg'
 import { useState } from 'react';
 
-function Summary({ empId, date, employee, amount }) {
+function Summary({ username, date, employee, amount }) {
   const [downloaded, setDownloaded] = useState(false);
 
 
@@ -17,7 +17,7 @@ function Summary({ empId, date, employee, amount }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ empId }),
+        body: JSON.stringify({ empId:username }),
       });
 
       if (!response.ok) throw new Error('Failed to download PDF');
@@ -26,7 +26,7 @@ function Summary({ empId, date, employee, amount }) {
       const url = window.URL.createObjectURL(blob);
 
       // Automatically trigger the download without adding to the DOM
-      const filename = `summary-${empId}.pdf`;
+      const filename = `summary-${username}.pdf`;
 
       // This works in all modern browsers
       const a = document.createElement('a');

@@ -48,6 +48,7 @@ body{
     font-weight: 600;
     margin-right: 1.5em;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 
     
 }
@@ -626,4 +627,8 @@ body{
 
 .refresh-button:hover {
   background-color: #e0e0e0;
+}
+
+.logoutBTN{
+
 }

@@ -7,12 +7,12 @@ router = APIRouter()
 def add_employee(data: dict):
     from db import add_user, add_budget
 
-    required_fields = ["firstName", "lastName", "email", "budget", "empId", "role"]
+    required_fields = ["firstName", "lastName", "email", "budget", "username", "role"]
     if not all(field in data for field in required_fields):
         raise HTTPException(status_code=400, detail="Missing required fields")
 
     user_data = {
-        "username": data["empId"],
+        "username": data["username"],
         "email": data["email"],
         "firstName": data["firstName"],
         "lastName": data["lastName"],
@@ -44,7 +44,7 @@ def list_employees(data: dict):
         if user.get("role") == "Manager" or user.get("role") == "Employee":
             budget = get_budget_by_employee(user["email"]) or {}
             result.append({
-                "empId": user.get("username"),
+                "username": user.get("username"),
                 "employee": user.get("email"),
                 "role": user.get("role"),
                 "firstName": user.get("firstName"),
@@ -60,7 +60,7 @@ def list_employees(data: dict):
 def delete_employee(data: dict):
     from db import list_users, delete_user, budgets
 
-    emp_id = data.get("empId")
+    emp_id = data.get("username")
     if not emp_id:
         raise HTTPException(status_code=400, detail="Missing empId")
 
@@ -70,7 +70,7 @@ def delete_employee(data: dict):
         raise HTTPException(status_code=404, detail="User not found")
 
     email = user["email"]
-    delete_user(email)
+    delete_user(emp_id)
     budgets.delete_one({"employee": email})
 
     return {"message": f"Deleted employee {emp_id} ({email})"}
@@ -89,7 +89,7 @@ def update_employee(data: dict):
     update_user(email, {
         "firstName": data["firstName"],
         "lastName": data["lastName"],
-        "username": data["empId"],
+        "username": data["username"],
         "role": data["role"]
     })
 

@@ -1,7 +1,7 @@
 import {ReactComponent as Trash} from '../images/trash.svg'
 import { useState } from 'react';
 
-function Employee({ empId, employee, role }) {
+function Employee({ username, employee, role }) {
     const [isDeleted, setIsDeleted] = useState(false);
 
     const handleDelete = async () => {
@@ -9,19 +9,19 @@ function Employee({ empId, employee, role }) {
     
         if (confirmed) {
           try {
-            const res = await fetch('', {
+            const res = await fetch('http://127.0.0.1:8000/api/hr/delete_employee', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({ empId }),
+              body: JSON.stringify({ username }),
             });
     
             if (!res.ok) throw new Error('Failed to delete employee');
+
     
             // ✅ Hide component on success
             setIsDeleted(true);
-    
             console.log(`Employee ${employee} deleted`);
     
           } catch (error) {
@@ -37,7 +37,7 @@ function Employee({ empId, employee, role }) {
       return (
         <div className="transaction-container">
           <div className="transData">
-            <span className="date">{empId}</span>
+            <span className="date">{username}</span>
             <span className="employee">{employee}</span>
             <span className="amount">{role}</span>
           </div>

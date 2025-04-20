@@ -179,8 +179,8 @@ def generate_expense_report(data: dict):
     from reportlab.pdfgen import canvas
     from fastapi.responses import FileResponse
     from db import list_transactions_by_employee, list_users
-
-    emp_id = data.get("employeeId")
+    print(data)
+    emp_id = data.get("empId")
     if not emp_id:
         raise HTTPException(status_code=400, detail="Missing employeeId")
 

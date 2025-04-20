@@ -16,7 +16,7 @@ function HRPage() {
     const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [budget, setBudget] = useState('');
-    const [empId, setEmpId] = useState('');
+    const [username, setUserName] = useState('');
     const [role, setRole] = useState('');
     const [employees, setEmployees] = useState([]);
 
@@ -27,7 +27,7 @@ function HRPage() {
 
       const fetchEmployees = async () => {
         try {
-          const res = await fetch('', {
+          const res = await fetch('http://127.0.0.1:8000/api/hr/list_employees', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -45,22 +45,22 @@ function HRPage() {
       };
 
       fetchEmployees();
-    }, [userId, choice]);
+    }, [userId, choice, employees]);
 
     const handleSubmit = async () => {
         try {
-          const response = await fetch('', {
+          const response = await fetch('http://127.0.0.1:8000/api/hr/add_employee', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              firstName,
-              lastName,
-              email,
-              budget,
-              empId,
-              role,
+              firstName:firstName,
+              lastName:lastName,
+              email:email,
+              budget:budget,
+              username:username,
+              role:role,
             }),
           });
     
@@ -71,29 +71,21 @@ function HRPage() {
           setLastName('');
           setEmail('');
           setBudget('');
-          setEmpId('');
+          setUserName('');
     
           console.log('Employee added successfully');
         } catch (error) {
           console.error('Error adding employee:', error);
         }
       };
-
-
-//**TEST DATA FOR MODEMPLOYEE COMPONENTS **/
-const data2 = [
-    {firstName:'Luis', lastName:'Smith', email:'lsmith@mail.com', budget:100, empId:1, role:'Manager'},
-    {firstName:'John', lastName:'Smith', email:'lsmith@mail.com', budget:140, empId:2, role:'Employee'},
-    {firstName:'Eric', lastName:'Smith', email:'lsmith@mail.com', budget:500, empId:14, role:'Manager'},
-];
-
+console.log(employees)
 
 const handleEditClick = (emp) => { //for the modification module when clicked
     setFirstName(emp.firstName);
     setLastName(emp.lastName);
-    setEmail(emp.email);
+    setEmail(emp.employee);
     setBudget(emp.budget);
-    setEmpId(emp.empId);
+    setUserName(emp.username);
     setRole(emp.role);
     setChoice("add");
   };
@@ -155,9 +147,9 @@ const handleEditClick = (emp) => { //for the modification module when clicked
                                 <input
                                 className='addInput'
                                 type="text"
-                                placeholder="Employee ID"
-                                value={empId}
-                                onChange={(e) => setEmpId(e.target.value)}
+                                placeholder="User Name"
+                                value={username}
+                                onChange={(e) => setUserName(e.target.value)}
                                 />
                                 <input
                                 className='addInput'
@@ -171,10 +163,11 @@ const handleEditClick = (emp) => { //for the modification module when clicked
                             {choice === 'remove' && (
                                     employees.map((emp, index) => {
                                         return <Employee 
-                                            key={index}
-                                            empId={emp.empId}
+                                            key={emp.username}
+                                            username={emp.username}
                                             employee={emp.employee}
                                             role={emp.role}
+                                            
                                         />
                                     })
                             )}
@@ -186,7 +179,7 @@ const handleEditClick = (emp) => { //for the modification module when clicked
                                     lastName={emp.lastName}
                                     email={emp.email}
                                     budget={emp.budget}
-                                    empId={emp.empId}
+                                    username={emp.username}
                                     role={emp.role}
                                 />
                                 <Pencil 
