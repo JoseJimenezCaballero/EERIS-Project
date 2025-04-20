@@ -5,11 +5,22 @@ router = APIRouter()
 
 @router.post("/add_employee")
 def add_employee(data: dict):
-    from db import add_user, add_budget
+    from db import add_user, add_budget, delete_budget
 
     required_fields = ["firstName", "lastName", "email", "budget", "username", "role"]
     if not all(field in data for field in required_fields):
         raise HTTPException(status_code=400, detail="Missing required fields")
+
+    username = data["username"]
+    email = data["email"]
+
+    # ✅ Check for existing user
+    existing_user = next((u for u in list_users() if u.get("username") == username), None)
+
+    if existing_user:
+        # 🔥 Delete user and their budget if they exist
+        delete_user(username)
+        delete_budget(email)
 
     user_data = {
         "username": data["username"],
