@@ -27,7 +27,7 @@ def budget_summary(email: str):
     if not budget_data:
         raise HTTPException(status_code=404, detail="Budget not found")
 
-    budget = budget_data.get("allocated", 0)
+    budget = budget_data.get("limit", 0)
 
     #  Calculate total spent
     total_spent = get_employee_total_spending(email)
@@ -83,17 +83,23 @@ def approve_by_transaction_id(data: dict):
 def get_employee_budgets(data: dict):
     from db import list_users, get_budget_by_employee
 
-    user_id = data.get("userId")
-    if not user_id:
-        raise HTTPException(status_code=400, detail="Missing userId")
-
     result = []
+    seen_emails = set()
+
     for user in list_users():
+        if user.get("role") != "Employee":
+            continue
+
         email = user.get("email")
+        if email in seen_emails:
+            continue
+        seen_emails.add(email)
+
         budget = get_budget_by_employee(email) or {}
 
         result.append({
-            "empId": user.get("username"),
+            "empId": user.get("username"),         # keep this if needed for key
+            "email": email,                        # ✅ ADD this line
             "employee": f"{user['firstName']} {user['lastName'][0]}.",
             "budget": budget.get("limit", 0)
         })
@@ -104,22 +110,15 @@ def get_employee_budgets(data: dict):
 
 
 
-@router.patch("/adjust-budget-by-id")
-def adjust_budget_by_id(data: dict):
-    emp_id = data.get("empId")
-    budget = data.get("amount")
+@router.patch("/adjust-budget")
+def adjust_budget(data: dict):
+    email = data.get("email")
+    amount = data.get("amount")
 
-    if not emp_id or budget is None:
-        raise HTTPException(status_code=400, detail="empId and amount required")
+    if not email or amount is None:
+        raise HTTPException(status_code=400, detail="email and amount are required")
 
-    user = next((u for u in list_users() if str(u.get("username")) == str(emp_id)), None)
-
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
-    email = user["email"]
-    update_budget(email, {"allocated": float(budget)})
-
+    update_budget(email, {"limit": float(amount)})
     return {"message": "Budget updated"}
 
 

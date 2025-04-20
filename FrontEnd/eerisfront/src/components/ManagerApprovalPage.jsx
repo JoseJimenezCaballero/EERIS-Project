@@ -130,12 +130,12 @@ function ManagerApprovalPage() {
     const userEmail = {email:user.email}
     const fetchAdjustData = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/manager/adjust_data', {
+        const res = await fetch('http://127.0.0.1:8000/api/manager/employee_budgets', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ userEmail }),
+          body: JSON.stringify({ userId: "test" })
         });
   
         if (!res.ok) throw new Error('Failed to fetch adjust data');
@@ -232,9 +232,9 @@ function ManagerApprovalPage() {
                         ))
                       ) : (
                         adjustData.map((empData, index) => (
-                          <Adjust /* NEEDS EMP ID */
+                          <Adjust
                             key={index}
-                            empId={empData.empId}
+                            empId={empData.email}            // ✅ Now this is the actual email
                             employee={empData.employee}
                             amount={empData.budget}
                           />
