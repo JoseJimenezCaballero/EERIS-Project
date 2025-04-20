@@ -100,19 +100,18 @@ function ManagerApprovalPage() {
   
     const fetchSummaryData = async () => {
       try {
-        const res = await fetch('http://127.0.0.1:8000/api/hr/list_employees', {
+        const res = await fetch('http://127.0.0.1:8000/api/manager/monthly_summary', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({}) // ✅ Add this
+          body: JSON.stringify({userId:1}) // ✅ Add this
         });
   
         if (!res.ok) throw new Error('Failed to fetch summary data');
   
         const data = await res.json();
-        const filteredData = data.filter(emp => emp.role === 'Employee');
-        setSummaryData(filteredData);
+        setSummaryData(data);
       } catch (err) {
         console.error('Error loading summary data:', err);
       }
@@ -223,10 +222,10 @@ function ManagerApprovalPage() {
                         summaryData.map((empData, index) => (
                           <Summary /* NEEDS EMP ID */
                             key={index || empData.empId}
-                            username={empData.username}
-                            date={'April'}
+                            username={empData.empId}
+                            date={empData.date}
                             employee={empData.employee}
-                            amount={empData.budget}
+                            amount={empData.amount}
                           />
                         ))
                       ) : (
