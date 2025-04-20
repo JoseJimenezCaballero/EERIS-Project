@@ -1,5 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from bson.objectid import ObjectId
+from reportlab.pdfgen import canvas
+import os
+from db import list_transactions_by_employee, list_users
 
 
 from db import (
@@ -76,26 +79,27 @@ def approve_by_transaction_id(data: dict):
 #     update_budget(employee_email, {"allocated": new_budget})
 #     return {"message": "Budget updated"}
 
-@router.post("/adjust_data")
-def get_adjust_data(data: dict):
-    email = data.get("email")
-    
-    if not email:
+@router.post("/employee_budgets")
+def get_employee_budgets(data: dict):
+    from db import list_users, get_budget_by_employee
+
+    user_id = data.get("userId")
+    if not user_id:
         raise HTTPException(status_code=400, detail="Missing userId")
 
-    print("📥 Received userId from frontend:", email)
-
-    # No filtering yet — just return all budgets for now
-    all_budgets = list(budgets.find({"employee": email}))
     result = []
+    for user in list_users():
+        email = user.get("email")
+        budget = get_budget_by_employee(email) or {}
 
-    for b in all_budgets:
         result.append({
-            "employee": b.get("employee"),
-            "budget": b.get("limit")
+            "empId": user.get("username"),
+            "employee": f"{user['firstName']} {user['lastName'][0]}.",
+            "budget": budget.get("limit", 0)
         })
 
     return result
+
 
 
 
@@ -108,7 +112,8 @@ def adjust_budget_by_id(data: dict):
     if not emp_id or budget is None:
         raise HTTPException(status_code=400, detail="empId and amount required")
 
-    user = next((u for u in list_users() if str(u.get("empId")) == str(emp_id)), None)
+    user = next((u for u in list_users() if str(u.get("username")) == str(emp_id)), None)
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
@@ -117,3 +122,92 @@ def adjust_budget_by_id(data: dict):
 
     return {"message": "Budget updated"}
 
+
+@router.post("/fetch_transactions")
+def fetch_transactions(data: dict):
+    from db import list_transactions
+
+    user_id = data.get("userId")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Missing userId")
+
+    txns = list_transactions()
+    result = []
+    for txn in txns:
+        if txn["status"] == "pending":  # Only those needing approval
+            result.append({
+                "transId": str(txn["_id"]),
+                "date": txn["date"],
+                "employee": txn["employee"].split("@")[0].title(),  # Just name part
+                "amount": f"${txn['amount']}"
+            })
+
+    return result
+
+from datetime import datetime
+
+@router.post("/monthly_summary")
+def monthly_summary(data: dict):
+    from db import list_users, list_transactions_by_employee
+
+    user_id = data.get("userId")
+    if not user_id:
+        raise HTTPException(status_code=400, detail="Missing userId")
+
+    users = list_users()
+    result = []
+
+    for u in users:
+        emp_email = u["email"]
+        emp_txns = list_transactions_by_employee(emp_email)
+
+        total = sum(t["amount"] for t in emp_txns if t.get("status") == "approved")
+
+        if total > 0:
+            result.append({
+                "empId": u["username"],
+                "date": datetime.now().strftime("%B"),  # e.g., April
+                "employee": f"{u['firstName']} {u['lastName'][0]}.",
+                "amount": f"${total}"
+            })
+
+    return result
+
+ 
+
+@router.post("/generate_expense_report")
+def generate_expense_report(data: dict):
+    from reportlab.pdfgen import canvas
+    from fastapi.responses import FileResponse
+    from db import list_transactions_by_employee, list_users
+
+    emp_id = data.get("employeeId")
+    if not emp_id:
+        raise HTTPException(status_code=400, detail="Missing employeeId")
+
+    user = next((u for u in list_users() if u.get("username") == str(emp_id)), None)
+    if not user:
+        raise HTTPException(status_code=404, detail="Employee not found")
+
+    email = user["email"]
+    transactions = list_transactions_by_employee(email)
+
+    if not transactions:
+        raise HTTPException(status_code=404, detail="No transactions found for this employee")
+
+    filename = f"expense_report_{emp_id}.pdf"
+    c = canvas.Canvas(filename)
+    c.drawString(100, 800, f"Expense Report for {user['firstName']} {user['lastName']}")
+    y = 770
+    for txn in transactions:
+        date = txn.get("date", "Unknown Date")
+        business = txn.get("business", "N/A")
+        amount = txn.get("amount", "0")
+        c.drawString(100, y, f"{date} - {business} - ${amount}")
+        y -= 20
+        if y < 50:
+            c.showPage()
+            y = 800
+
+    c.save()
+    return FileResponse(path=filename, filename=filename, media_type='application/pdf')
