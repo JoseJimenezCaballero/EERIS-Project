@@ -12,7 +12,7 @@ function Summary({ empId, date, employee, amount }) {
   doesnt have to click it. */
   const handleDownload = async () => {
     try {
-      const response = await fetch('', {
+      const response = await fetch('http://127.0.0.1:8000/api/manager/generate_expense_report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

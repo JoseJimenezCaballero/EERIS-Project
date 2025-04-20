@@ -9,7 +9,7 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -24,7 +24,6 @@ const LoginPage = () => {
 
       // Store the received user data in context
       setUser(userData); // Use the new setUser function
-
       if (userData.role === 'Manager') {
         navigate('/approveTransactions');
       }else if (userData.role === 'HR') {
@@ -38,6 +37,7 @@ const LoginPage = () => {
       alert('Invalid credentials. Please try again.');
     }
   };
+
 
   return (
     <>

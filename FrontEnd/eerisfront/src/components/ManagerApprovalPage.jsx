@@ -10,7 +10,7 @@ import { useUser } from './UserContext';
 
 
 function ManagerApprovalPage() {
-  const { userId } = useUser();
+  const { user } = useUser();
   const [choice, setChoice] = useState("approve");
   const [transactions, setTransactions] = useState([]);
   const [summaryData, setSummaryData] = useState([]);
@@ -126,7 +126,8 @@ function ManagerApprovalPage() {
 
   useEffect(() => {
     if (choice !== 'adjust') return;
-  
+    
+    const userEmail = {email:user.email}
     const fetchAdjustData = async () => {
       try {
         const res = await fetch('http://127.0.0.1:8000/api/manager/adjust_data', {
@@ -134,7 +135,7 @@ function ManagerApprovalPage() {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ userId }),
+          body: JSON.stringify({ userEmail }),
         });
   
         if (!res.ok) throw new Error('Failed to fetch adjust data');
@@ -147,7 +148,7 @@ function ManagerApprovalPage() {
     };
   
     fetchAdjustData();
-  }, [userId, choice]);
+  }, [user, choice]);
 
   // useEffect(() => {
   //   if (choice !== 'adjust') return;
@@ -178,6 +179,7 @@ function ManagerApprovalPage() {
   //   fetchAdjustData();
   // }, [choice]);
   
+  console.log(adjustData,"adjust data")
 
   return (
     <div className="">

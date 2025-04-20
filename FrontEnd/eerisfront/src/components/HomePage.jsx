@@ -87,6 +87,7 @@ const HomePage = () => {
            throw new Error(`(${res.status}) ${errorData.detail || 'Failed to fetch budget info'}`);
         }
         const data = await res.json();
+        console.log(data,"budget")
         setBudget(data.budget || 0);
         setTotalAmnt(data.totalSpent || 0);
       } catch (fetchError) {
@@ -142,7 +143,7 @@ const HomePage = () => {
           </>
         );
     }
-
+    console.log(transactions)
   // Main content rendering remains the same...
   return (
     <>

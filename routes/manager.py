@@ -78,20 +78,19 @@ def approve_by_transaction_id(data: dict):
 
 @router.post("/adjust_data")
 def get_adjust_data(data: dict):
-    user_id = data.get("userId")
+    email = data.get("email")
     
-    if not user_id:
+    if not email:
         raise HTTPException(status_code=400, detail="Missing userId")
 
-    print("📥 Received userId from frontend:", user_id)
+    print("📥 Received userId from frontend:", email)
 
     # No filtering yet — just return all budgets for now
-    all_budgets = list(budgets.find({}))
+    all_budgets = list(budgets.find({"employee": email}))
     result = []
 
     for b in all_budgets:
         result.append({
-            "empId": b.get("employee"),
             "employee": b.get("employee"),
             "budget": b.get("limit")
         })
