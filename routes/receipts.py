@@ -15,7 +15,9 @@ import easyocr
 import openai
 import base64
 import os
-openai.api_key = "" #add api key
+from openai import OpenAI
+
+client = OpenAI(api_key="") #API KEY
 router = APIRouter()
 reader = easyocr.Reader(['en'], gpu=False)  # Use CPU
 
@@ -25,47 +27,51 @@ async def upload_receipt_image(
     userId: str = Form(...)
 ):
     try:
-        # Read and parse image with EasyOCR
         contents = await file.read()
-        image = Image.open(io.BytesIO(contents))
-        image.save("temp.jpg")
-        result = reader.readtext("temp.jpg", detail=0)
-        ocr_text = "\n".join(result)
+        b64_image = base64.b64encode(contents).decode("utf-8")
 
-        print("🧾 OCR TEXT:\n", ocr_text)
-
-        # Use GPT-3.5 to format the text into structured JSON
-        completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+        response = client.chat.completions.create(
+            model="gpt-4o",
             messages=[
                 {
                     "role": "user",
-                    "content": (
-                        f"Extract the business name, date (MM/DD/YYYY or similar), "
-                        f"and total amount (highest number) from the following receipt text:\n\n"
-                        f"{ocr_text}\n\n"
-                        f"Return only this JSON:\n"
-                        f"{{\n  \"business\": \"...\",\n  \"date\": \"...\",\n  \"amount\": 0.00\n}}"
-                    )
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": (
+                                "Extract the business name, total amount (use the highest price), and the date "
+                                "in the format MM/DD/YYYY from this receipt. Return this exactly:\n"
+                                "{\n  \"business\": \"...\",\n  \"date\": \"...\",\n  \"amount\": 0.00\n}"
+                            )
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {
+                                "url": f"data:image/jpeg;base64,{b64_image}"
+                            }
+                        }
+                    ]
                 }
             ],
             max_tokens=300
         )
 
-        structured_output = completion['choices'][0]['message']['content']
-        print("🤖 GPT OUTPUT:\n", structured_output)
+        raw_output = response.choices[0].message.content
+        print("GPT-4o Raw Output:\n", raw_output)
 
-        # Extract JSON from GPT's response
-        match = json.loads(structured_output.strip())
+        # Clean out markdown fencing (```json ... ```)
+        cleaned = raw_output.strip().strip("```").replace("json", "").strip()
+
+        parsed_data = json.loads(cleaned)
 
         return {
-            "parsed": match,
+            "parsed": parsed_data,
             "userId": userId
         }
 
     except Exception as e:
-        print("❌ Hybrid OCR+GPT Error:", e)
-        raise HTTPException(status_code=500, detail=f"Failed to process receipt: {str(e)}")
+        print("❌ GPT-4o Error:", e)
+        raise HTTPException(status_code=500, detail=f"GPT-4o parsing failed: {str(e)}")
     
 # ✅ [2] FINAL FORM SUBMISSION: Save receipt and transaction (manual or image-based)
 @router.post("/upload")

@@ -6,3 +6,4 @@ google-cloud-vision
 pydantic
 easyocr
 reportlab
+openai
