@@ -5,13 +5,17 @@ from db import (
     add_transaction
 )
 import uuid
+import json
 from datetime import datetime
 from PIL import Image
 import pytesseract
 import io
 import re
 import easyocr
-
+import openai
+import base64
+import os
+openai.api_key = "" #add api key
 router = APIRouter()
 reader = easyocr.Reader(['en'], gpu=False)  # Use CPU
 
@@ -21,36 +25,47 @@ async def upload_receipt_image(
     userId: str = Form(...)
 ):
     try:
+        # Read and parse image with EasyOCR
         contents = await file.read()
         image = Image.open(io.BytesIO(contents))
-        image.save("temp.jpg")  # Save temporarily for OCR
-
+        image.save("temp.jpg")
         result = reader.readtext("temp.jpg", detail=0)
-        text = "\n".join(result)
+        ocr_text = "\n".join(result)
 
-        print("--- OCR TEXT ---\n", text)
+        print("🧾 OCR TEXT:\n", ocr_text)
 
-        # Extract fields from result
-        date_match = re.search(r"\d{2}[-/]\d{2}[-/]\d{4}", text)
-        date = date_match.group(0) if date_match else "N/A"
+        # Use GPT-3.5 to format the text into structured JSON
+        completion = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "user",
+                    "content": (
+                        f"Extract the business name, date (MM/DD/YYYY or similar), "
+                        f"and total amount (highest number) from the following receipt text:\n\n"
+                        f"{ocr_text}\n\n"
+                        f"Return only this JSON:\n"
+                        f"{{\n  \"business\": \"...\",\n  \"date\": \"...\",\n  \"amount\": 0.00\n}}"
+                    )
+                }
+            ],
+            max_tokens=300
+        )
 
-        numbers = re.findall(r"\d+\.\d{2}", text)
-        amount = max([float(n) for n in numbers]) if numbers else 0.0
+        structured_output = completion['choices'][0]['message']['content']
+        print("🤖 GPT OUTPUT:\n", structured_output)
 
-        business = result[0] if result else "Unknown"
+        # Extract JSON from GPT's response
+        match = json.loads(structured_output.strip())
 
         return {
-            "parsed": {
-                "business": business,
-                "date": date,
-                "amount": amount
-            },
+            "parsed": match,
             "userId": userId
         }
 
     except Exception as e:
-        print("EasyOCR Error:", e)
-        raise HTTPException(status_code=500, detail=f"OCR failed: {e}")
+        print("❌ Hybrid OCR+GPT Error:", e)
+        raise HTTPException(status_code=500, detail=f"Failed to process receipt: {str(e)}")
     
 # ✅ [2] FINAL FORM SUBMISSION: Save receipt and transaction (manual or image-based)
 @router.post("/upload")
