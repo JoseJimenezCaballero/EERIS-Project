@@ -212,7 +212,7 @@ const HomePage = () => {
                 </tbody>
               </table>
             </div>
-            <div style={{marginTop:"1em"}} className="submit-button" onClick={() => handleNavigation('/receipts')}>
+            <div style={{marginTop:"1.5em"}} className="submit-button" onClick={() => handleNavigation('/receipts')}>
               Submit New Transaction
             </div>
           </div>

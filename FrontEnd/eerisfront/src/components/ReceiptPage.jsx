@@ -10,6 +10,7 @@ const ReceiptPage = () => {
     date: '',
     business: '',
     category: '',
+    subcategory:'',
     amount: '',
   });
 
@@ -90,7 +91,7 @@ const handleSubmit = async (e) => {
     console.log('Transaction submitted:', result);
     alert('Receipt submitted successfully!');
 
-    setReceiptData({ date: '', business: '', category: '', amount: '' });
+    setReceiptData({ date: '', business: '', category: '', amount: '', subcategory: '' });
   } catch (error) {
     console.error('Submission error:', error);
     alert(`Submission failed: ${error.message}`);
@@ -144,8 +145,9 @@ const handleSubmit = async (e) => {
             value={receiptData.category}
             onChange={handleChange}
             required
+            className='category'
           >
-            <option value="" disabled selected>Category</option>
+            <option value="" disabled selected >Category</option>
             <option value="Food">Food</option>
             <option value="Merchandise">Merchandise</option>
             <option value="Supplies">Supplies</option>
@@ -153,6 +155,15 @@ const handleSubmit = async (e) => {
             <option value="Bills">Bills</option>
           </select>
 
+          <input
+            type="text"
+            name="subcategory"
+            value={receiptData.subcategory}
+            onChange={handleChange}
+            required
+            placeholder='Subcategory'
+            className='receiptInput'
+          />
 
           <input
             type="number"
