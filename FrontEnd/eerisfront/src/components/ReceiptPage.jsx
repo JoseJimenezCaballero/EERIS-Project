@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import NavBar from './NavBar';
 import { useUser } from './UserContext'; // ✅ import context
+import { ImageUp, Calendar, Building2, CircleDollarSign, Rows3 } from 'lucide-react';
 
 const ReceiptPage = () => {
   const { user } = useUser(); // ✅ get userId from context
@@ -101,42 +102,50 @@ const handleSubmit = async (e) => {
       <div className="receipt-page">
         {/* Upload box */}
         <div className="upload-box">
-          <div className="upload-icon">📤</div>
-          <h3>Upload Receipt Image Here</h3>
-          <p>We will parse some info automatically. Any remaining info will need to be filled manually.</p>
-          <input type="file" className="file-input" onChange={handleFileChange}/>
+          <div className="upload-icon"><ImageUp size={64}/></div>
+          <h3 style={{fontWeight:"300", fontSize:"1.3em", margin:"0", marginTop:"1em"}}>Upload Receipt Image Here</h3>
+          <p style={{fontWeight:"200", width:"88%", fontSize:"0.9em", margin:"0", marginBottom:"2em"}}>We will parse some info automatically. Any remaining info will need to be filled manually.</p>
+          <label className="file-upload">
+            Upload Receipt
+            <input 
+              type="file" 
+              className="file-input" 
+              onChange={handleFileChange}
+              accept='image/*'
+              />
+            </label>
         </div>
 
         {/* Form */}
         <form className="receipt-form" onSubmit={handleSubmit}>
           <h2>Receipt Information</h2>
-
-          <label>Date</label>
           <input
             type="text"
             name="date"
             value={receiptData.date}
             onChange={handleChange}
+            placeholder={'Date'}
             required
+            className='receiptInput'
           />
 
-          <label>Business</label>
           <input
             type="text"
             name="business"
             value={receiptData.business}
             onChange={handleChange}
             required
+            placeholder='Business'
+            className='receiptInput'
           />
 
-          <label>Category</label>
           <select
             name="category"
             value={receiptData.category}
             onChange={handleChange}
             required
           >
-            <option value="">-- Select a category --</option>
+            <option value="" disabled selected>Category</option>
             <option value="Food">Food</option>
             <option value="Merchandise">Merchandise</option>
             <option value="Supplies">Supplies</option>
@@ -145,10 +154,6 @@ const handleSubmit = async (e) => {
           </select>
 
 
-
-
-
-          <label>Amount</label>
           <input
             type="number"
             name="amount"
@@ -157,6 +162,8 @@ const handleSubmit = async (e) => {
             step="0.01"
             min="0"
             required
+            placeholder='Amount'
+            className='receiptInput'
           />
 
 

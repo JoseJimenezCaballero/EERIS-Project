@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from './UserContext';
 import NavBar from './NavBar';
 import '../styles.css';
@@ -8,7 +8,7 @@ const LoginPage = () => {
   const { setUser } = useUser(); // Get setUser from context
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+  const location = useLocation();
   
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -25,11 +25,11 @@ const LoginPage = () => {
       // Store the received user data in context
       setUser(userData); // Use the new setUser function
       if (userData.role === 'Manager') {
-        navigate('/approveTransactions');
+        handleNavigation('/approveTransactions');
       }else if (userData.role === 'HR') {
-        navigate('/hrpage');
+        handleNavigation('/hrpage');
       }else {
-        navigate('/home');
+        handleNavigation('/home');
       }
 
     } catch (err) {
@@ -38,17 +38,23 @@ const LoginPage = () => {
     }
   };
 
+  const handleNavigation = (path) => {
+    if (location.pathname !== path) {
+      const navEvent = new CustomEvent('start-navigation', { detail: path });
+      window.dispatchEvent(navEvent);
+    }
+  };
 
   return (
     <>
       <NavBar />
       <div className="login-container">
         <form className="login-box" onSubmit={handleLogin}>
-          <h2>LOG IN</h2>
+          <h2 style={{fontWeight:"300"}}>Welcome</h2>
 
-          <label htmlFor="email">Email</label>
           <input
             type="email"
+            className='logInput'
             id="email"
             placeholder="Email"
             value={email}
@@ -56,9 +62,9 @@ const LoginPage = () => {
             required
           />
 
-          <label htmlFor="password">Password</label>
           <input
             type="password"
+            className='logInput'
             id="password"
             placeholder="Password"
             value={password}
@@ -66,7 +72,7 @@ const LoginPage = () => {
             required
           />
 
-          <button type="submit">LOG IN</button>
+          <button type="submit">Submit</button>
         </form>
       </div>
     </>

@@ -1,12 +1,11 @@
 import NavBar from './NavBar';
-import {ReactComponent as Fileplus} from '../images/filePlus.svg'
-import {ReactComponent as FileMinus} from '../images/fileMinus.svg'
-import {ReactComponent as FilePencil} from '../images/filePencil.svg'
 import Transaction from './Transaction';
 import { useEffect, useState } from 'react';
 import Summary from './Sumarry';
 import Adjust from './Adjust';
 import { useUser } from './UserContext';
+import { Calendar, User, CircleDollarSign, Rows3, UserPlus, UserRoundMinus, UserRoundPen } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 
 function ManagerApprovalPage() {
@@ -184,16 +183,16 @@ function ManagerApprovalPage() {
       <NavBar />
           <div className="ManagerAppContainer">
               <div className="ManagerApp-leftWidgetContainer">
-                  <div className="approve" style={{cursor:"pointer"}} onClick={()=>setChoice("approve")}>
-                    <Fileplus className="leftWidgetIcons plus"/>
+                  <div className="glassy-button approve" style={{cursor:"pointer"}} onClick={()=>setChoice("approve")}>
+                    <UserPlus className="leftWidgetIcons plus"/>
                     <span className='plusSpan'>Approve Transactions</span>
                   </div>
-                  <div className="summary" style={{cursor:"pointer"}} onClick={()=>setChoice("summary")}>
-                    <FileMinus className="leftWidgetIcons minus"/>
+                  <div className="glassy-button summary" style={{cursor:"pointer"}} onClick={()=>setChoice("summary")}>
+                    <UserRoundMinus className="leftWidgetIcons minus"/>
                     <span className='minusSpan'>View Summary</span>
                   </div>
-                  <div className="adjust" style={{cursor:"pointer"}} onClick={()=>setChoice("adjust")}>
-                    <FilePencil className="leftWidgetIcons penicl"/>
+                  <div className="glassy-button adjust" style={{cursor:"pointer"}} onClick={()=>setChoice("adjust")}>
+                    <UserRoundPen className="leftWidgetIcons penicl"/>
                     <span className='pencilSpan'>Adjust Budgets</span>
                   </div>
               </div>
@@ -201,46 +200,68 @@ function ManagerApprovalPage() {
                 { choice === 'approve' && <h1>Transactions</h1>}
                 { choice === 'summary' && <h1>Monthly Summary</h1>}
                 { choice === 'adjust' && <h1>Employee Budgets</h1>}
-                <div className="innerContainer">
-                    <div className="header">
-                      <span className='text'>{choice !== 'adjust' ? 'Date' : 'Employee'}</span>
-                      {choice !== 'adjust' && <span className='text'>Employee</span>}
-                      <span className={choice !== 'adjust' ? 'text' : 'budgetText'}>{choice !== 'adjust' ? 'Amount' : 'Budget'}</span>
-                    </div>
-                    <div className="body">
-                      {choice === 'approve' ? (
-                        transactions.map((trans, index) => (
-                          <Transaction /* NEEDS TRANS ID */
-                            key={trans._id || index}
-                            transId={trans._id}
-                            date={trans.date}
-                            employee={trans.employee}
-                            amount={trans.amount}
-                          />
-                        ))
-                      ) : choice === 'summary' ? (
-                        summaryData.map((empData, index) => (
-                          <Summary /* NEEDS EMP ID */
-                            key={index || empData.empId}
-                            username={empData.empId}
-                            date={empData.date}
-                            employee={empData.employee}
-                            amount={empData.amount}
-                          />
-                        ))
-                      ) : (
-                        adjustData.map((empData, index) => (
-                          <Adjust
-                            key={index}
-                            empId={empData.email}            // ✅ Now this is the actual email
-                            employee={empData.employee}
-                            amount={empData.budget}
-                          />
-                        ))
-                      )}
-                    </div>
-                </div>
+                  <div className="innerContainer">
+                      <div className="header">
+                        <span className='text'>{choice !== 'adjust' ?( 
+                          <>
+                          <Calendar className="thIcons"/>
+                          Date
+                          </>
+                            ) : (<><User className="thIcons"/>Employee</>)}</span>
+                        {choice !== 'adjust' && <span className='text'>{<><User className="thIcons"/>Employee</>}</span>}
+                        <span className={choice !== 'adjust' ? 'text' : 'budgetText'}>{choice !== 'adjust' ? (<><CircleDollarSign className="thIcons"/>Amount</>) : (<><CircleDollarSign className="thIcons"/>Budget</>)}</span>
+                      </div>
+                      <AnimatePresence>
+                      <motion.div 
+                      className="body"
+                      key={choice}
+                      initial={{ opacity: 0, x: 50 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -30 }}
+                      transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
+                      style={{
+                        position: 'absolute',   // ✅ makes it not affect layout flow
+                        width: '100%',          // ✅ full width
+                        top: 54,
+                        left: -1,
+                      }}
+                      >
+                        {choice === 'approve' ? (
+                          transactions.map((trans, index) => (
+                            <Transaction /* NEEDS TRANS ID */
+                              key={trans._id || index}
+                              transId={trans._id}
+                              date={trans.date}
+                              employee={trans.employee}
+                              amount={trans.amount}
+                            />
+                          ))
+                        ) : choice === 'summary' ? (
+                          summaryData.map((empData, index) => (
+                            <Summary /* NEEDS EMP ID */
+                              key={index || empData.empId}
+                              username={empData.empId}
+                              date={empData.date}
+                              employee={empData.employee}
+                              amount={empData.amount}
+                            />
+                          ))
+                        ) : (
+                          adjustData.map((empData, index) => (
+                            <Adjust
+                              key={index}
+                              empId={empData.email}            // ✅ Now this is the actual email
+                              employee={empData.employee}
+                              amount={empData.budget}
+                            />
+                          ))
+                        )}
+                      </motion.div>
+                      </AnimatePresence>
+                  </div>
+
             </div>
+
       </div>
     </div>
   );

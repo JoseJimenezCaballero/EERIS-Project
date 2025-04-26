@@ -1,4 +1,4 @@
-import {ReactComponent as Trash} from '../images/trash.svg'
+import { Trash } from 'lucide-react';
 import { useState } from 'react';
 
 function Employee({ username, employee, role }) {

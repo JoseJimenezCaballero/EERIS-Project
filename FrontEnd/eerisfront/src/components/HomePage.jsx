@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useUser } from './UserContext'; // Use the updated context
 import NavBar from './NavBar';
 import BudgetWheel from './BudgetWheel';
 import '../styles.css'; // Make sure styles are imported
+import { Calendar, Building2, CircleDollarSign, Rows3 } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ const HomePage = () => {
   const [totalAmnt, setTotalAmnt] = useState(0); // Total spent from budget info
   const [isLoading, setIsLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const location = useLocation();
 
   const fetchBudgetInfo = async () => {
     try {
@@ -135,10 +138,6 @@ const HomePage = () => {
 
   }, [user]); // Re-run effect when user object changes
 
-  const handleSubmitClick = () => {
-    navigate('/receipts');
-  };
-
   const percent = budget > 0 ? Math.round((totalAmnt / budget) * 100) : 0;
 
   if (isLoading) {
@@ -167,23 +166,30 @@ const HomePage = () => {
         );
     }
     console.log(transactions)
+      // ✅ NEW: Dispatch event instead of navigating immediately
+  const handleNavigation = (path) => {
+    if (location.pathname !== path) {
+      const navEvent = new CustomEvent('start-navigation', { detail: path });
+      window.dispatchEvent(navEvent);
+    }
+  };
   // Main content rendering remains the same...
   return (
     <>
       <NavBar />
       <div className="home-container">
-        <h1 className="home-title">Hello {name}!</h1>
+        <h1 className="home-title">Hello {name}</h1>
         <div className="home-main">
           <div className="home-transactions">
-            <h3>Recent Transactions</h3>
+            <h3 style={{ fontWeight:"300", fontSize:"1.3em" }}>Recent Transactions</h3>
             <div className="table-container">
               <table className="home-table">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Business</th>
-                    <th>Amount</th>
-                    <th>Category</th>
+                    <th className="thHome"><div className="thIcon"><Calendar className='thIcons'/>Date</div></th>
+                    <th className="thHome"><div className="thIcon"><Building2 className='thIcons'/>Business</div></th>
+                    <th className="thHome"><div className="thIcon"><CircleDollarSign className='thIcons'/>Amount</div></th>
+                    <th className="thHome"><div className="thIcon"><Rows3 className='thIcons'/>Category</div></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -206,17 +212,17 @@ const HomePage = () => {
                 </tbody>
               </table>
             </div>
-            <button className="submit-button" onClick={handleSubmitClick}>
+            <div style={{marginTop:"1em"}} className="submit-button" onClick={() => handleNavigation('/receipts')}>
               Submit New Transaction
-            </button>
+            </div>
           </div>
           <div className="home-budget">
-            <h3>Budget Overview</h3>
+            <h3 className='thHome'>Budget Overview</h3>
             <BudgetWheel percent={percent} />
             <p>${totalAmnt.toFixed(2)} / ${budget.toFixed(2)}</p>
             <p>{transactions.length} Transaction(s) this period</p>
             <button className="refresh-button" onClick={fetchBudgetInfo}>
-              🔁 Refresh Budget
+              Refresh Budget
             </button>
           </div>
         </div>

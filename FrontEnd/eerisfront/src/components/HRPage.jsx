@@ -1,12 +1,11 @@
 import NavBar from './NavBar';
 import { useState, useEffect } from 'react';
-import {ReactComponent as Fileplus} from '../images/filePlus.svg'
-import {ReactComponent as FileMinus} from '../images/fileMinus.svg'
-import {ReactComponent as FilePencil} from '../images/filePencil.svg'
 import Employee from './Employee';
 import ModifyEmployee from './ModifyEmployee';
-import {ReactComponent as Pencil} from '../images/pencil.svg'
+import { Pencil } from 'lucide-react';
 import { useUser } from './UserContext';
+import { UserPlus, UserRoundMinus, UserRoundPen } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function HRPage() {
     const [choice, setChoice] = useState("add");
@@ -72,6 +71,7 @@ function HRPage() {
           setEmail('');
           setBudget('');
           setUserName('');
+          setRole('')
     
           console.log('Employee added successfully');
         } catch (error) {
@@ -92,19 +92,20 @@ const handleEditClick = (emp) => { //for the modification module when clicked
 
     return (
         <div className="">
+
           <NavBar />
               <div className="ManagerAppContainer">
                   <div className="ManagerApp-leftWidgetContainer">
-                      <div className="addEmployee" style={{cursor:"pointer"}} onClick={()=>setChoice("add")}>
-                        <Fileplus className="leftWidgetIcons plus"/>
+                      <div className="glassy-button addEmployee" style={{cursor:"pointer"}} onClick={()=>setChoice("add")}>
+                        <UserPlus className="leftWidgetIcons plus"/>
                         <span className='plusSpanHR'>Add Employee</span>
                       </div>
-                      <div className="summaryHR" style={{cursor:"pointer"}} onClick={()=>setChoice("remove")}>
-                        <FileMinus className="leftWidgetIcons minus"/>
+                      <div className="glassy-button summaryHR" style={{cursor:"pointer"}} onClick={()=>setChoice("remove")}>
+                        <UserRoundMinus className="leftWidgetIcons minus"/>
                         <span className='minusSpanHR'>Remove Employee</span>
                       </div>
-                      <div className="adjust" style={{cursor:"pointer"}} onClick={()=>setChoice("modify")}>
-                        <FilePencil className="leftWidgetIcons penicl"/>
+                      <div className="glassy-button adjust" style={{cursor:"pointer"}} onClick={()=>setChoice("modify")}>
+                        <UserRoundPen className="leftWidgetIcons penicl"/>
                         <span className='pencilSpanHR'>Modify Employee</span>
                       </div>
                   </div>
@@ -112,7 +113,15 @@ const handleEditClick = (emp) => { //for the modification module when clicked
                     { choice === 'add' && <h1>Employee Data</h1>}
                     { choice === 'remove' && <h1>Employees</h1>}
                     { choice === 'modify' && <h1>Modify Data</h1>}
-                    <div className="innerContainer">
+                    <AnimatePresence mode="wait">
+                    <motion.div 
+                    className="innerContainer"
+                    key={choice}
+                    initial={{ opacity: 0, x: 50 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -30 }}
+                    transition={{ duration: 0.15, ease: [0.4, 0, 0.2, 1] }}
+                    >
                     <div className="body">
                         {choice === 'add' && (
                             <form className='addform'>
@@ -191,8 +200,9 @@ const handleEditClick = (emp) => { //for the modification module when clicked
                             ))
                             )}
                         </div>
-                    </div>
-                    { choice === 'add' && <div className="hrSubmitBtn" onClick={handleSubmit}>Submit</div>}
+                    </motion.div>
+                    { choice === 'add' && <div className="glassy-button hrSubmitBtn" onClick={handleSubmit}>Submit</div>}
+                    </AnimatePresence>
                 </div>
           </div>
         </div>

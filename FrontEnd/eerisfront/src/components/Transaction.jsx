@@ -1,8 +1,7 @@
-import {ReactComponent as Approve} from '../images/approve.svg'
-import {ReactComponent as Deny} from '../images/deny.svg'
 import {ReactComponent as ApproveFill} from '../images/approveFill.svg'
 import {ReactComponent as DenyFill} from '../images/denyFill.svg'
 import { useState } from 'react';
+import {CircleCheck, CircleSlash} from 'lucide-react';
 
 function Transaction({transId, date, employee, amount }) {
     
@@ -71,20 +70,20 @@ function Transaction({transId, date, employee, amount }) {
           </div>
           <div className="transIcons">
             {decision === 'approve' ? (
-              <ApproveFill className="actualIcons" />
+              <CircleCheck style={{color:"#0FF0FC"}} className="actualIcons" />
             ) : decision === 'deny' ? (
-              <DenyFill className="actualIcons" />
+              <CircleSlash style={{color:"#0FF0FC"}} className="actualIcons" />
             ) : (
               <>
-                <Approve
+                <CircleCheck
                   className="actualIcons"
                   onClick={() => handleDecision('approve')}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', color:"rgba(0, 214, 143, 0.55)" }}
                 />
-                <Deny
+                <CircleSlash
                   className="actualIcons"
                   onClick={() => handleDecision('deny')}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', color:"rgba(255, 76, 91, 0.55)"}}
                 />
               </>
             )}

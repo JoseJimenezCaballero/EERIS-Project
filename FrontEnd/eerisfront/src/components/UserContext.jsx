@@ -21,7 +21,7 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = () => {
-     setUserState(null);
+     setUserState('');
      localStorage.removeItem("user");
      // Optionally clear other storage too
   }

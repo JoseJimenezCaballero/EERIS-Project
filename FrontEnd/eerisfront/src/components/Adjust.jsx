@@ -1,4 +1,4 @@
-import {ReactComponent as Pencil} from '../images/pencil.svg'
+import { Pencil } from 'lucide-react';
 import { useState } from 'react';
 
 function Adjust({ empId, employee, amount }) {
@@ -96,7 +96,7 @@ function Adjust({ empId, employee, amount }) {
       </div>
       <div>
         {isEditing ? (
-          <button className="adjustAmntBTN" onClick={handleSubmit}>Submit</button>
+          <button className="glassy-button adjustAmntBTN" onClick={handleSubmit}>Submit</button>
         ) : (
           <Pencil className="pencilIcon" onClick={() => setIsEditing(true)} style={{ cursor: 'pointer' }} />
         )}

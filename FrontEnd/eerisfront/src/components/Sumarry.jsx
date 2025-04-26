@@ -1,6 +1,7 @@
 import {ReactComponent as PDF} from '../images/pdf.svg'
 import {ReactComponent as ApproveFill} from '../images/approveFill.svg'
 import { useState } from 'react';
+import {CircleCheck} from 'lucide-react';
 
 function Summary({ username, date, employee, amount }) {
   const [downloaded, setDownloaded] = useState(false);
@@ -52,7 +53,10 @@ function Summary({ username, date, employee, amount }) {
           </div>
           <div>
               {downloaded ? (
-                <ApproveFill className="pdfIcon" />
+                <CircleCheck 
+                className="pdfIcon"
+                style={{color:"rgba(0, 214, 143, 0.55)"}}
+                />
               ) : (
                 <PDF onClick={handleDownload} style={{ cursor: 'pointer' }} className="pdfIcon" />
               )}

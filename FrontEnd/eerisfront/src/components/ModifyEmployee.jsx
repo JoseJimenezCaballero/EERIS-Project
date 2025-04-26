@@ -1,4 +1,3 @@
-import {ReactComponent as Pencil} from '../images/pencil.svg'
 import { useState } from 'react';
 
 function ModifyEmployee({ firstName, lastName, email, budget, username, role }) {

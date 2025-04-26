@@ -1,21 +1,153 @@
 body{
- background-color: #FFFFFF;
  font-family: "Montserrat", sans-serif;
  margin: 0;
  padding: 0;
+background-image: url('images/Background.png');
+ color: #e0e0e0; /* Light gray for good contrast */
+ background-repeat: no-repeat;
+ background-position: center;
+  background-size: cover;
+  background-color: #131321;
+  position: relative;
+  overflow: hidden;
 }
 
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: radial-gradient(circle, rgba(0, 217, 255, 0.061) 0%, transparent 70%);
+  background-repeat: no-repeat;
+  background-size: 40vw 50vh; /* smaller, floating light */
+  background-position: 0% 50%;
+  animation: moveLight 20s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+  animation: moveLight 20s ease-in-out infinite, pulseGlow 9s ease-in-out infinite;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: radial-gradient(circle, rgba(162, 136, 211, 0.145) 0%, transparent 70%);
+  background-repeat: no-repeat;
+  background-size: 35vw 50vh;
+  background-position: 100% 60%;
+  animation: moveLightReverse 27s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+  animation: moveLightReverse 27s ease-in-out infinite, pulseGlow 10s ease-in-out infinite;
+}
+
+.glow-third {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: radial-gradient(circle, rgba(255, 120, 90, 0.1) 0%, transparent 70%);
+  background-repeat: no-repeat;
+  background-size: 35vw 50vh;
+  background-position: 100% 100%;
+  animation: moveDiagonal 29s ease-in-out infinite, pulseGlowAlt 12s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes moveLight {
+  0% {
+    background-position: 0% 50%;  /* start left center */
+  }
+  25% {
+    background-position: 25% 40%; /* move up */
+  }
+  50% {
+    background-position: 100% 50%; /* move right */
+  }
+  75% {
+    background-position: 75% 60%; /* move down */
+  }
+  100% {
+    background-position: 0% 50%;  /* return to left center */
+  }
+}
+
+@keyframes moveLightReverse {
+  0% {
+    background-position: 100% 60%;
+  }
+  25% {
+    background-position: 75% 70%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+  75% {
+    background-position: 25% 40%;
+  }
+  100% {
+    background-position: 100% 60%;
+  }
+}
+
+@keyframes moveDiagonal {
+  0% {
+    background-position: 100% 100%;
+  }
+  25% {
+    background-position: 75% 75%;
+  }
+  50% {
+    background-position: 0% 0%;
+  }
+  75% {
+    background-position: 25% 25%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes pulseGlowAlt {
+  0%, 100% {
+    background-size: 35vw 70vh;
+    opacity: 1;
+  }
+  50% {
+    background-size: 45vw 70vh;
+    opacity: 0.75;
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    background-size: 40vw 80vh;
+    opacity: 1;
+  }
+  50% {
+    background-size: 50vw 90vh;
+    opacity: 0.85;
+  }
+}
 .NavBar-container{
-    background-color: #007AFF;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     align-items: center;
     height: 4.5em;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
 
 }
 
 .NavBar-text{
-    color: white;
+    color: #D1DAD0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -25,30 +157,30 @@ body{
 
 .NavBar-title{
     margin: 0;
-    font-weight: bold;
-    font-size: 1.5em;
+    font-weight: 500;
+    font-size: 1.3em;
 }
 
 .NavBar-links{
     margin: 0;
     font-weight:300;
-    font-size: 1.2em;
+    font-size: 1.1em;
 }
 
 .NavBar-LoginBTN{
     display: flex;
-    color: #070707;
-    background-color: white;
-    font-size: 1.2em;
-    height: 2.0em;
+    color: #ffffff;
+    background-color: #131321;
+    font-size: 1.1em;
+    height: 1.8em;
     justify-content: center;
     align-items: center;
     border-radius: 1em;
-    width: 5.5em;
-    font-weight: 600;
+    width: 6.1em;
+    font-weight: 250;
     margin-right: 1.5em;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    border: #777777, 0.4px, solid;
 
     
 }
@@ -56,10 +188,11 @@ body{
 
 .ManagerAppContainer{
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-content: center;
     align-items: center;
     margin-top: 3em;
+    gap: 20em;
     
 
 }
@@ -69,8 +202,11 @@ body{
     flex-direction: column;
     justify-content: space-evenly;
     align-items: center;
-    color: #F7F7F7;
-    background-color: #e1e1e1;
+    background: rgba(43, 43, 43, 0.13); /* translucent white */
+    backdrop-filter: blur(12px);           /* this adds the blur */
+    -webkit-backdrop-filter: blur(12px);   /* for Safari */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
+    border: 0.5px solid rgba(255, 255, 255, 0.2); /* subtle border */
     width: 21em;
     height: 17em;
     margin-top: 5em;
@@ -82,11 +218,29 @@ body{
 
 }
 
+.glassy-button {
+  background: rgba(255, 255, 255, 0.13); /* translucent white */
+  backdrop-filter: blur(12px);           /* this adds the blur */
+  -webkit-backdrop-filter: blur(12px);   /* for Safari */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-weight: 300;
+}
+
+.glassy-button:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 3px #0ff0fcb4;
+  border-color: #0FF0FC;
+}
+
 .ManagerApp-leftWidgetContainer .approve{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #007AFF;
     width: 85%;
     border-radius: 2.5em;
     height: 2.8em;
@@ -96,7 +250,6 @@ body{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #44E07E;
     width: 85%;
     border-radius: 2.5em;
     height: 2.8em;
@@ -105,14 +258,14 @@ body{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #A390E4;
     width: 85%;
     border-radius: 2.5em;
     height: 2.8em;
 }
 
 .leftWidgetIcons{
-    height: 1.8em;
+    height: 1.5em;
+    color:#79eff5;
 }
 
 .plus{
@@ -128,19 +281,23 @@ body{
 }
 
 .plusSpan{
-    padding-right: 2em;
+    padding-right: 2.6em;
 }
 
 .minusSpan{
-    padding-right: 4.2em;
+    padding-right: 4.8em;
 }
 
 .pencilSpan{
-    padding-right: 4.2em;
+    padding-right: 4.8em;
 }
 
 .ManagerApp-rightWidgetContainer{
-    background-color: #e1e1e1;
+  background: rgba(43, 43, 43, 0.13); /* translucent white */
+  backdrop-filter: blur(12px);           /* this adds the blur */
+  -webkit-backdrop-filter: blur(12px);   /* for Safari */
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
+  border: 0.5px solid rgba(255, 255, 255, 0.2); /* subtle border */
     height: 42em;
     width: 40em;
     margin-right: 6em;
@@ -153,13 +310,16 @@ body{
 .ManagerApp-rightWidgetContainer h1{
     margin: 0;
     padding: 0;
-    font-weight: 650;
+    font-weight: 300;
     margin-top: 1.3em;
     margin-bottom: 1.0em;
 }
 
 .ManagerApp-rightWidgetContainer .innerContainer{
-    background-color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.13); /* translucent white */
+  backdrop-filter: blur(12px);           /* this adds the blur */
+  -webkit-backdrop-filter: blur(12px);   /* for Safari */
+  border: 1px solid rgba(255, 255, 255, 0.1);
     height: 80%;
     width: 93%;
     border-radius:2.0em;
@@ -168,17 +328,17 @@ body{
 .ManagerApp-rightWidgetContainer .innerContainer .header{
     display: flex;
     align-items: center;
-    border-bottom: 0.15em solid #c6c5c5;  /* Add a white top border */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.255);
     height: 2.3em;
     margin-top: 1em;
 
 }
 
 .ManagerApp-rightWidgetContainer .innerContainer .header .text{
-    color: #1E1E1E;
-    font-weight: 500;
+    color: white;
+    font-weight: 250;
     font-size: 1.3em;
-    padding-left: 3.5em;
+    padding-left: 2.5em;
 }
 
 .ManagerApp-rightWidgetContainer .body{
@@ -189,6 +349,7 @@ body{
     margin-top: 1em;
     max-height: 83%; /* or set a specific height like 600px */
     overflow-y: auto;
+    
 
 }
 
@@ -200,7 +361,7 @@ body{
 }
 
 .transaction-container .transData{
-    border: 0.096em solid black;
+    border: 0.096em solid #0FF0FC;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -237,20 +398,19 @@ body{
 
 .pencilIcon{
     display: flex;
-    height: 2em;
-    width: 2em;
+    height: 1.8em;
+    width: 1.8em;
     margin-left: 2em;
     padding-bottom: 0.1em;
 }
 
 .adjustAmntBTN{
-    all: unset;
     cursor: pointer; /* Keep this so it's clear the element is clickable */
-    background-color: #A390E4;
-    color: #FFFFFF;
-    width: 6.5em;
+    color: #161616;
+    background-color: #0FF0FC;
+    width: 6.7em;
     height: 2em;
-    font-weight: 600;
+    font-weight: 450;
     text-align: center;
     border-radius: 1.2em;
     margin-left: 0.7em;
@@ -259,7 +419,11 @@ body{
 
 .amountInput {
     all: unset;
-    background-color: #f0f0f0;
+    background: rgba(43, 43, 43, 0.13); /* translucent white */
+    backdrop-filter: blur(12px);           /* this adds the blur */
+    -webkit-backdrop-filter: blur(12px);   /* for Safari */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
+    border: 0.5px solid rgba(255, 255, 255, 0.2); /* subtle border */
     border-radius: 0.75em;
     width: 6em;
     height: 2.2em;
@@ -271,8 +435,8 @@ body{
   }
 
   .budgetText{
-    color: #1E1E1E;
-    font-weight: 500;
+    color: #ffffff;
+    font-weight: 300;
     font-size: 1.3em;
     padding-left: 7.0em;
   }
@@ -283,18 +447,24 @@ body{
     align-items: center;
     height: 100vh;
     padding: 1rem;
-    background-color: white;
+    
   }
   
   .login-box {
-    background-color: #e3e2e2;
+    background: rgba(43, 43, 43, 0.13); /* translucent white */
+    backdrop-filter: blur(12px);           /* this adds the blur */
+    -webkit-backdrop-filter: blur(12px);   /* for Safari */
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
     border-radius: 40px;
     padding: 2.5rem;
     width: 100%;
     max-width: 360px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border: 0.5px solid rgba(255, 255, 255, 0.2); /* subtle border */
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
   }
   
   .login-logo {
@@ -325,30 +495,42 @@ body{
   }
   
   .login-box button {
-    background-color: #357afe;
+    background-color: #ffffff00;
     color: white;
     padding: 0.7rem;
     border: none;
     font-size: 1rem;
     border-radius: 10px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    font-family: 'Montserrat';
+    transition: background-color 0.3s ease, border 0.3s ease;
+    
   }
   
   .login-box button:hover {
-    background-color: #1d5ddf;
+    background-color: #ffffff1f;
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+
   }
   
+  .logInput{
+    all: unset;
+    font-family: "Montserrat";
+    font-weight: 500;
+    font-size: 0.9em;
+    padding-left: 1.7em;
+    color:rgb(255, 255, 255);
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.472) !important; /* subtle border */
+  }
 
-  @media (max-width: 400px) {
-    .login-box {
-      padding: 1.5rem;
-      border-radius: 30px;
-    }
-  
-    .login-logo {
-      width: 80px;
-    }
+  .logInput:not(:placeholder-shown){
+    border-bottom: 0.5px solid rgba(80, 214, 214, 0.824) !important; /* subtle border */
+
+  }
+
+  .logInput::placeholder{
+    color: #c3c3c3;
   }
  
   .home-container {
@@ -357,74 +539,117 @@ body{
   
   .home-title {
     font-size: 2.5rem;
-    font-weight: bold;
+    font-weight: 300;
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 4.8rem;
+    color: #ffffff;
+    background: linear-gradient(90deg, #79eff5, #c0fcec);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
   
   .home-main {
     display: flex;
     justify-content: space-evenly;
     align-items: flex-start;
-    gap: 3rem;
+    gap: 2rem;
     flex-wrap: wrap;
+  }
+
+  .thHome{
+    font-weight: 300;
+  }
+
+  .thIcon{
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+  }
+
+  .thIcons{
+    color:#79eff5;
+    width: 1.3em;
   }
   
   .home-transactions {
-    background-color: #e3e2e2;
+    background: rgba(43, 43, 43, 0.13); /* translucent white */
+    backdrop-filter: blur(12px);           /* this adds the blur */
+    -webkit-backdrop-filter: blur(12px);   /* for Safari */
     border-radius: 2rem;
     padding: 2rem;
     width: 40rem;
     display: flex;
     flex-direction: column;
     align-items: center;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
+    border: 0.5px solid rgba(255, 255, 255, 0.2); /* subtle border */
     
   }
   
   .home-table {
     width: 100%;
-    background-color: white;
+    background: rgba(150, 150, 150, 0.186); /* translucent white */
+    backdrop-filter: blur(12px);           /* this adds the blur */
+    -webkit-backdrop-filter: blur(12px);   /* for Safari */
     border-radius: 1rem;
     border-collapse: collapse;
     overflow: hidden;
+    border: 0.5px solid rgba(255, 255, 255, 0.2) !important;/* subtle border */
+    
   }
 
   .table-container{
     max-height: 30em; /* adjust height as needed */
+    min-height: 11em;
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 1rem;
     width: 100%;
+    
   }
   
   .home-table th, .home-table td {
     padding: 1rem;
     text-align: left;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 0.5px solid rgba(255, 255, 255, 0.2); /* subtle border */
   }
   
+
   .submit-button {
-    font-family: "Montserrat", sans-serif;
-    margin-top: 1.5rem;
-    background-color: #44E07E;
-    color: white;
-    padding: 0.8rem 2rem;
+    background-color: #ffffff37;
+    color: rgb(255, 255, 255);
+    padding: 0.7rem;
     border: none;
-    border-radius: 1.5rem;
     font-size: 1rem;
-    font-weight: 600;
+    border-radius: 10px;
     cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    font-family: 'Montserrat';
+    transition: background-color 0.3s ease, border 0.5s ease;
+    
+  }
+  
+  .submit-button:hover {
+    box-shadow: 0 0 3px #0ff0fcb4;
+    border-color: #0FF0FC;
+
   }
   
   .home-budget {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background-color: #e3e2e2;
+    background: rgba(43, 43, 43, 0.13); /* translucent white */
+    backdrop-filter: blur(12px);           /* this adds the blur */
+    -webkit-backdrop-filter: blur(12px);   /* for Safari */
+    border: 0.5px solid rgba(255, 255, 255, 0.2) !important;/* subtle border */
     border-radius: 2rem;
     padding: 2rem;
     width: 14rem;
     text-align: center;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
+    margin-right: 2em;
+
   }
   
   .budget-circle {
@@ -445,86 +670,151 @@ body{
   
   .receipt-page {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: flex-start;
     padding: 2rem;
     flex-wrap: wrap;
+    margin-top: 6em;
+    gap: 20em;
   }
   
   .upload-box {
-    background-color: #f9f9f9;
-    border: 2px dashed #ccc;
+    background: rgba(43, 43, 43, 0.13); /* translucent white */
+    backdrop-filter: blur(12px);           /* this adds the blur */
+    -webkit-backdrop-filter: blur(12px);   /* for Safari */
+    border: 1.5px dashed rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
     border-radius: 1.5rem;
     padding: 2rem;
-    width: 18rem;
+    width: 20rem;
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    gap: 0.5rem;
+    height: 21em;
+    align-items: center;
+    justify-content: center;
   }
   
-  .upload-icon {
-    font-size: 3rem;
-  }
-  
+
+.file-upload{
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+  text-align: center;
+  user-select: none;
+  position: relative;
+  overflow: hidden;
+  margin-top: 2em;
+}
+
+.file-upload:hover {
+  box-shadow: 0 0 3px #0ff0fcb4;
+  border-color: #0FF0FC;
+}
+
   .file-input {
-    margin-top: 1rem;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+
+  .file-upload input[type="file"] {
+    display: none;
   }
   
   .receipt-form {
-    background-color: #e3e2e2;
+    background: rgba(43, 43, 43, 0.13); /* translucent white */
+    backdrop-filter: blur(12px);           /* this adds the blur */
+    -webkit-backdrop-filter: blur(12px);   /* for Safari */
+    border: 1.5px dashed rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
     border-radius: 2.5rem;
     padding: 2rem;
-    width: 24rem;
+    width: 28rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 2.5rem;
+    height: 32em;
+    align-items: center;
   }
 
   .receipt-form select {
-    padding: 0.7rem;
-    border: none;
-    border-bottom: 2px solid #888;
-    background-color: #f6f6f6;
-    border-radius: 0.5rem;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+    outline: none;
+    appearance: none;       /* Remove native arrow */
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg fill="white" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    width: 92%;
   }
   
   
   .receipt-form h2 {
     text-align: center;
-    margin-bottom: 1rem;
+    margin-bottom: 1.2rem;
+    font-weight: 300;
+    font-size: 1.7em;
   }
   
-  .receipt-form input {
-    padding: 0.7rem;
-    border: none;
-    border-bottom: 2px solid #888;
-    background-color: #f6f6f6;
-    border-radius: 0.5rem;
-  }
   
-  .receipt-form label {
-    font-weight: 500;
-  }
   
-  .submit-button {
-    font-family: "Montserrat", sans-serif;
-    background-color: #44E07E;
+  .receiptInput{
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
     color: white;
-    padding: 0.8rem;
-    border: none;
-    border-radius: 1.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+    outline: none;
+    width: 85%;
+  }
+
+  .receiptInput::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+    font-style: italic;
+    padding-left: 0.1em;
   }
   
+  .receiptInput:focus {
+    box-shadow: 0 0 3px #0ff0fcb4;
+    border-color: #0FF0FC;
+    background: rgba(255, 255, 255, 0.08);
+    font-weight: 100;
+  }
+
+
   .addEmployee{
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background-color: #007AFF;
     width: 85%;
     border-radius: 2.5em;
     height: 2.8em;
@@ -539,7 +829,6 @@ body{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #FF6B6B;
   width: 85%;
   border-radius: 2.5em;
   height: 2.8em;
@@ -557,15 +846,14 @@ body{
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #44E07E;
-  height: 2.3em;
+  height: 2.0em;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
   color: #F7F7F7;
-  width: 12em;
+  width: 10em;
   border-radius: 2em;
-  font-size: 1.3em;
-  font-weight: 600;
+  font-size: 1.2em;
+  font-weight: 300;
   cursor: pointer;
 }
 
@@ -582,19 +870,24 @@ body{
 
 .addInput{
   all: unset;
-  border-bottom: 2px solid #888;
+  border-bottom: 2px solid #0FF0FC;
   width: 18em;
   font-size: 1.3em;
   font-weight: 250;
   padding-bottom: 0.33em; /* ✅ adds space between text and bottom border */
 }
 
+.addInput::placeholder {
+  color: rgb(189, 189, 189);
+}
+
 .trashIcon{
   display: flex;
-  height: 2.2em;
-  width: 2.2em;
+  height: 2.0em;
+  width: 2.0em;
   margin-left: 3em;
   padding-bottom: 0.1em;
+  color:rgba(255, 76, 91, 0.55);
 }
 
 .modifyContainer{
@@ -604,7 +897,7 @@ body{
 }
 
 .transDataHR{
-  border: 0.096em solid black;
+  border: 0.096em solid #0FF0FC;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -614,21 +907,35 @@ body{
   border-radius: 0.6em;
 }
 
+
 .refresh-button {
-  margin-top: 10px;
-  padding: 6px 12px;
-  font-size: 14px;
-  background-color: #f0f0f0;
-  border-radius: 6px;
-  border: 1px solid #ccc;
+  background-color: #ffffff37;
+  color: rgb(255, 255, 255);
+  padding: 0.5rem;
+  border: none;
+  font-size: 1rem;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.1); 
+  font-family: 'Montserrat';
+  transition: background-color 0.3s ease, border 0.5s ease;
+  margin-top: 1em;
+  
 }
 
 .refresh-button:hover {
-  background-color: #e0e0e0;
+  box-shadow: 0 0 3px #0ff0fcb4;
+  border-color: #0FF0FC;
+
 }
 
-.logoutBTN{
-
+.blackOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-color: black;
+  z-index: 10;
+  pointer-events: none; /* so it doesn't block interaction */
 }
