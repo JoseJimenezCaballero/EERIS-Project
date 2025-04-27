@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Request, UploadFile, File, Form
 from db import (
     add_receipt, get_receipt_by_id, list_receipts,
     list_receipts_by_owner, update_receipt, delete_receipt,
-    add_transaction
+    add_transaction, get_transaction_by_id
 )
 import uuid
 import json
@@ -66,7 +66,8 @@ async def upload_receipt_image(
 
         return {
             "parsed": parsed_data,
-            "userId": userId
+            "userId": userId,
+            "image_base64": b64_image   # ✅ send image base64 to frontend
         }
 
     except Exception as e:
@@ -85,7 +86,6 @@ async def upload_receipt(request: Request):
 
     receipt_data = data.copy()
 
-    # --- Validate and convert fields ---
     owner_email = receipt_data.get("userId")
     if not owner_email:
         raise HTTPException(status_code=400, detail="Missing userId")
@@ -99,6 +99,11 @@ async def upload_receipt(request: Request):
     else:
         raise HTTPException(status_code=400, detail="Missing amount")
 
+    # New: Optional base64 image (if provided)
+    image_base64 = receipt_data.pop("image_base64", None)
+    if image_base64:
+        receipt_data["image_base64"] = image_base64
+
     required_receipt_fields = ["owner", "business", "date", "total", "category"]
     missing_fields = [f for f in required_receipt_fields if f not in receipt_data]
     if missing_fields:
@@ -108,7 +113,6 @@ async def upload_receipt(request: Request):
     receipt_data["receipt_id"] = receipt_id
     receipt_data["status"] = "processed"
 
-    # --- Save receipt ---
     try:
         receipt_result = add_receipt(receipt_data)
         if not receipt_result.inserted_id:
@@ -116,7 +120,7 @@ async def upload_receipt(request: Request):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to add receipt: {e}")
 
-    # --- Prepare transaction ---
+    # Transaction creation (same as before)
     transaction_data = {
         "employee": owner_email,
         "receipt_id": receipt_id,
@@ -126,11 +130,6 @@ async def upload_receipt(request: Request):
         "business": receipt_data["business"],
         "category": receipt_data["category"]
     }
-
-    required_transaction_fields = ["employee", "receipt_id", "amount", "status", "date", "business", "category"]
-    missing_tx_fields = [f for f in required_transaction_fields if f not in transaction_data or transaction_data[f] is None]
-    if missing_tx_fields:
-        raise HTTPException(status_code=500, detail=f"Missing derived fields for transaction: {', '.join(missing_tx_fields)}")
 
     try:
         transaction_result = add_transaction(transaction_data)
@@ -145,6 +144,7 @@ async def upload_receipt(request: Request):
         "transaction_inserted_id": str(transaction_result.inserted_id),
         "receipt_id": receipt_id
     }
+
 
 
 # ✅ View all receipts by employee (email as owner)

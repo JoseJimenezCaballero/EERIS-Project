@@ -22,7 +22,9 @@ def delete_user(username): return users.delete_one({"username": username})
 # ====== RECEIPTS ======
 def add_receipt(data): return receipts.insert_one(data)
 
-def get_receipt_by_id(receipt_id): return receipts.find_one({"_id": ObjectId(receipt_id)})
+def get_receipt_by_id(receipt_id):
+    return receipts.find_one({"receipt_id": receipt_id})
+
 
 def list_receipts(): return list(receipts.find())
 def list_receipts_by_owner(owner): return list(receipts.find({"owner": owner}))
@@ -31,7 +33,18 @@ def delete_receipt(receipt_id): return receipts.delete_one({"receipt_id": receip
 
 # ====== TRANSACTIONS ======
 def add_transaction(data): return transactions.insert_one(data)
-def get_transaction_by_id(tx_id): return transactions.find_one({"_id": ObjectId(tx_id)})
+def get_transaction_by_id(receipt_id):
+    # Try matching receipt_id field first
+    txn = transactions.find_one({"receipt_id": receipt_id})
+    if txn:
+        return txn
+    # If not found, try _id field
+    try:
+        txn = transactions.find_one({"_id": ObjectId(receipt_id)})
+        return txn
+    except:
+        return None
+
 
 def list_transactions(): return list(transactions.find())
 def list_transactions_by_employee(email): return list(transactions.find({"employee": email}))  # 🛠 used in receipts.py
@@ -39,15 +52,8 @@ def list_pending_transactions(): return list(transactions.find({"status": "pendi
 from bson import ObjectId
 
 def update_transaction(receipt_id, new_data):
-    try:
-        # Ensure receipt_id is an ObjectId
-        receipt_oid = ObjectId(receipt_id) if isinstance(receipt_id, str) else receipt_id
-    except Exception as e:
-        print("❌ Invalid ObjectId:", receipt_id)
-        return None
-
-    print("✅ Updating transaction with ID:", receipt_oid)
-    return transactions.update_one({ "_id": receipt_oid }, { "$set": new_data })
+    print("✅ Updating transaction by receipt_id:", receipt_id)
+    return transactions.update_one({ "receipt_id": receipt_id }, { "$set": new_data })
 
 def update_transaction_by_id(_id, new_data): return transactions.update_one({"_id": _id}, {"$set": new_data})
 def delete_transaction(receipt_id): return transactions.delete_one({"receipt_id": receipt_id})

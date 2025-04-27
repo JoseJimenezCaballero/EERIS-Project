@@ -946,3 +946,23 @@ body::after {
   backdrop-filter: blur(8px) !important;
   -webkit-backdrop-filter: blur(8px) !important;
 }
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: rgb(58, 33, 126);
+  padding: 2em;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh; /* 🆕 max height */
+  overflow-y: auto;  /* 🆕 scroll inside modal */
+}
