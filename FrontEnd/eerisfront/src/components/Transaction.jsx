@@ -56,7 +56,7 @@ function Transaction({ transId, date, employee, amount, refreshTransactions }) {
           <CircleSlash
             className="actualIcons"
             onClick={(e) => { e.stopPropagation(); handleDecision('rejected'); }}
-            style={{ cursor: 'pointer', color: "rgba(255, 76, 91, 0.55)" }}
+            style={{ cursor: 'pointer', color: "rgba(255, 76, 91, 0.65)" }}
           />
         </div>
       </div>

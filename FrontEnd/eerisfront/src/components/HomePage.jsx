@@ -3,8 +3,9 @@ import { useUser } from './UserContext';
 import NavBar from './NavBar';
 import BudgetWheel from './BudgetWheel';
 import '../styles.css';
-import { Calendar, Building2, CircleDollarSign, Rows3 } from 'lucide-react';
+import { Calendar, Building2, CircleDollarSign, Rows3, Pencil, CircleCheck, CircleSlash } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -79,6 +80,9 @@ const HomePage = () => {
       }
       return;
     }
+
+    const userFirstName = user.firstName || 'Employee'; // Use firstName from context, fallback to 'User'
+     setName(userFirstName); // Set name directly
 
     const fetchAllData = async () => {
       await Promise.all([
@@ -182,7 +186,7 @@ const HomePage = () => {
       </>
     );
   }
-
+console.log(transactions)
   return (
     <>
       <NavBar />
@@ -199,7 +203,7 @@ const HomePage = () => {
                     <th className="thHome"><div className="thIcon"><Building2 className='thIcons' />Business</div></th>
                     <th className="thHome"><div className="thIcon"><CircleDollarSign className='thIcons' />Amount</div></th>
                     <th className="thHome"><div className="thIcon"><Rows3 className='thIcons' />Category</div></th>
-                    <th className="thHome">Action</th>
+                    <th className="thHome"><div className="thIcon"><Pencil className='thIcons' />Action</div></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -218,10 +222,15 @@ const HomePage = () => {
                         <td>{txn.category}</td>
                         <td>
                           {txn.status === "pending" && (
-                            <button onClick={(e) => { e.stopPropagation(); handleEditClick(txn); }}>
+                            <button 
+                            onClick={(e) => { e.stopPropagation(); handleEditClick(txn); }}
+                            className='glassy-button actionEdit'
+                            >
                               Edit
                             </button>
                           )}
+                          {txn.status === 'approved' && (<CircleCheck style={{color: "rgba(0, 214, 143, 0.55)"}} className="iconsAction"/>)}
+                          {txn.status === 'rejected' && (<CircleSlash style={{color: "rgba(255, 76, 91, 0.65)"}} className="iconsAction"/>)}
                         </td>
                       </tr>
                     ))
@@ -246,33 +255,61 @@ const HomePage = () => {
       </div>
 
       {/* Popup Modal */}
+      <AnimatePresence>
       {showModal && selectedTransaction && (
-        <div className="modal-overlay">
-          <div className="modal-content">
+        <motion.div 
+        className="modal-overlay"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.1 }}
+        >
+          <motion.div 
+          className="modal-content"
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.5 }}
+          transition={{ duration: 0.15, ease: 'easeInOut' }}
+          >
             {isEditing ? (
               <>
-                <h2>Edit Transaction</h2>
-                <input type="text" value={selectedTransaction.business} onChange={(e) => setSelectedTransaction({ ...selectedTransaction, business: e.target.value })} className="receiptInput" placeholder="Business" />
-                <input type="text" value={selectedTransaction.date} onChange={(e) => setSelectedTransaction({ ...selectedTransaction, date: e.target.value })} className="receiptInput" placeholder="Date" />
-                <input type="number" value={selectedTransaction.amount} onChange={(e) => setSelectedTransaction({ ...selectedTransaction, amount: parseFloat(e.target.value) })} className="receiptInput" placeholder="Amount" />
-                <input type="text" value={selectedTransaction.category} onChange={(e) => setSelectedTransaction({ ...selectedTransaction, category: e.target.value })} className="receiptInput" placeholder="Category" />
-                <button className="submit-button" onClick={handleSaveEdit}>Save Changes</button>
-                <button className="submit-button" onClick={() => setShowModal(false)}>Cancel</button>
+                <h2 style={{fontWeight:"300", color:"#79eff5"}}>Edit Transaction</h2>
+                <input style={{width:"20em"}} type="text" value={selectedTransaction.business} onChange={(e) => setSelectedTransaction({ ...selectedTransaction, business: e.target.value })} className="receiptInput" placeholder="Business" />
+                <input style={{width:"20em"}} type="text" value={selectedTransaction.date} onChange={(e) => setSelectedTransaction({ ...selectedTransaction, date: e.target.value })} className="receiptInput" placeholder="Date" />
+                <input style={{width:"20em"}} type="number" value={selectedTransaction.amount} onChange={(e) => setSelectedTransaction({ ...selectedTransaction, amount: parseFloat(e.target.value) })} className="receiptInput" placeholder="Amount" />
+                <select
+                  name="category"
+                  value={selectedTransaction.category}
+                  onChange={(e) => setSelectedTransaction({ ...selectedTransaction, category: e.target.value })}
+                  required
+                  className="receiptInput categoryModal"
+                  style={{ width:"22em" }}
+                >
+                  <option value="" disabled selected>Category</option>
+                  <option value="Food">Food</option>
+                  <option value="Merchandise">Merchandise</option>
+                  <option value="Supplies">Supplies</option>
+                  <option value="Software">Software</option>
+                  <option value="Bills">Bills</option>
+                </select>
+                <button style={{ width:"9em", marginTop:"1em"}} className="submit-button" onClick={handleSaveEdit}>Save Changes</button>
+                <button style={{ width:"9em", backgroundColor:"transparent"}} className="submit-button" onClick={() => setShowModal(false)}>Cancel</button>
               </>
             ) : (
               <>
-                <h2>Receipt Image</h2>
+                <h2 style={{fontWeight:"300", color:"#79eff5"}}>Receipt Image</h2>
                 {selectedTransaction.image_base64 ? (
-                  <img src={`data:image/jpeg;base64,${selectedTransaction.image_base64}`} alt="Receipt" style={{ maxWidth: '100%', height: 'auto' }} />
+                  <img className="modalImg" src={`data:image/jpeg;base64,${selectedTransaction.image_base64}`} alt="Receipt" />
                 ) : (
                   <p>No receipt image available.</p>
                 )}
-                <button className="submit-button" onClick={() => setShowModal(false)}>Close</button>
+                <button style={{ width:"6em", marginTop:"1em"}} className="submit-button" onClick={() => setShowModal(false)}>Close</button>
               </>
             )}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
+      </AnimatePresence>
     </>
   );
 };

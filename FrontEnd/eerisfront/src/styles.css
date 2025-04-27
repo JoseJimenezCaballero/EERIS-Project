@@ -576,8 +576,8 @@ body::after {
     backdrop-filter: blur(12px);           /* this adds the blur */
     -webkit-backdrop-filter: blur(12px);   /* for Safari */
     border-radius: 2rem;
-    padding: 2rem;
-    width: 43rem;
+    padding: 1.8rem;
+    width: 45rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -958,11 +958,38 @@ body::after {
 }
 
 .modal-content {
-  background: rgb(58, 33, 126);
+  background: rgba(43, 43, 43, 0.24); /* translucent white */
+  backdrop-filter: blur(12px);           /* this adds the blur */
+  -webkit-backdrop-filter: blur(12px);   /* for Safari */
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
   padding: 2em;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh; /* 🆕 max height */
-  overflow-y: auto;  /* 🆕 scroll inside modal */
+  border-radius: 1em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 35em;
+  gap: 1em;
+}
+
+.inputModal{
+  width: 5em !important;
+}
+
+.iconsAction{
+  margin: 0;
+  height: 1.5em;
+  padding-left: 2em;
+}
+
+.actionEdit{
+  width: 4em;
+  font-size: 0.9em;
+  border-radius: 0.5em;
+  margin-left: 1em;
+}
+
+.modalImg{
+  width: 75%;
 }
