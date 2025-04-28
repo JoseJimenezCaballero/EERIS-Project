@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import NavBar from './NavBar';
 import { useUser } from './UserContext';
 import { ImageUp } from 'lucide-react';
+import {ReactComponent as LoadAnimation} from '../images/infinite.svg';
 
 const ReceiptPage = () => {
   const { user } = useUser();
@@ -16,6 +17,8 @@ const ReceiptPage = () => {
 
   const [base64Image, setBase64Image] = useState(''); // 🆕 base64 image
 
+  const [isLoading, setIsLoading] = useState(false);
+
   // 🛠 Handle file upload + OCR + read base64
   const handleFileChange = async (e) => {
     const file = e.target.files[0];
@@ -28,13 +31,16 @@ const ReceiptPage = () => {
     formData.append('file', file);
     formData.append('userId', user.email);
 
+    setIsLoading(true);
     try {
       const res = await fetch('http://127.0.0.1:8000/api/receipts/upload-image', {
         method: 'POST',
         body: formData,
       });
 
-      if (!res.ok) throw new Error('Failed to parse receipt image');
+      if (!res.ok) {
+        throw new Error('Failed to parse receipt image');
+      };
 
       const { parsed } = await res.json();
 
@@ -52,8 +58,10 @@ const ReceiptPage = () => {
       };
       reader.readAsDataURL(file);
 
+      setIsLoading(false);
       alert('Receipt image parsed! Please confirm details and choose a category.');
     } catch (error) {
+      setIsLoading(false);
       console.error('Error parsing image:', error);
       alert(`Failed to parse receipt: ${error.message}`);
     }
@@ -119,7 +127,8 @@ const ReceiptPage = () => {
           <p style={{ fontWeight: "200", width: "88%", fontSize: "0.9em", margin: "0", marginBottom: "2em" }}>
             We will parse some info automatically. Any remaining info will need to be filled manually.
           </p>
-          <label className="file-upload">
+          { isLoading ? <div className='animContainer'><LoadAnimation className="anim"/> Overthinking...</div>: 
+            <label className="file-upload">
             Upload Receipt
             <input
               type="file"
@@ -127,9 +136,8 @@ const ReceiptPage = () => {
               onChange={handleFileChange}
               accept="image/*"
             />
-          </label>
+          </label>}
         </div>
-
         {/* Receipt Form */}
         <form className="receipt-form" onSubmit={handleSubmit}>
           <h2>Receipt Information</h2>

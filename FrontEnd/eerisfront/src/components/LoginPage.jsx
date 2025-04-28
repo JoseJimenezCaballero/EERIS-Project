@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from './UserContext';
 import NavBar from './NavBar';
 import '../styles.css';
+import WelcomeAnimate from './WelcomeAnimate'
 
 const LoginPage = () => {
   const { setUser } = useUser(); // Get setUser from context
@@ -49,8 +50,9 @@ const LoginPage = () => {
     <>
       <NavBar />
       <div className="login-container">
+      <WelcomeAnimate />
         <form className="login-box" onSubmit={handleLogin}>
-          <h2 style={{fontWeight:"300"}}>Welcome</h2>
+          <h2 style={{fontWeight:"300"}}>Log-in</h2>
 
           <input
             type="email"

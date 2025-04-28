@@ -26,7 +26,7 @@ body::before {
   animation: moveLight 20s ease-in-out infinite;
   z-index: -1;
   pointer-events: none;
-  animation: moveLight 20s ease-in-out infinite, pulseGlow 9s ease-in-out infinite;
+  animation: moveLight 18s ease-in-out infinite, pulseGlow 9s ease-in-out infinite;
 }
 
 body::after {
@@ -43,7 +43,7 @@ body::after {
   animation: moveLightReverse 27s ease-in-out infinite;
   z-index: -1;
   pointer-events: none;
-  animation: moveLightReverse 27s ease-in-out infinite, pulseGlow 10s ease-in-out infinite;
+  animation: moveLightReverse 24s ease-in-out infinite, pulseGlow 10s ease-in-out infinite;
 }
 
 .glow-third {
@@ -57,9 +57,42 @@ body::after {
   background-repeat: no-repeat;
   background-size: 35vw 50vh;
   background-position: 100% 100%;
-  animation: moveDiagonal 29s ease-in-out infinite, pulseGlowAlt 12s ease-in-out infinite;
+  animation: moveDiagonal 32s ease-in-out infinite, pulseGlowAlt 12s ease-in-out infinite;
   z-index: -1;
   pointer-events: none;
+}
+
+.glow-fourth {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: radial-gradient(circle, rgba(255, 150, 222, 0.088) 0%, transparent 70%);
+  background-repeat: no-repeat;
+  background-size: 35vw 50vh;
+  background-position: 0% 100%; /* Start bottom left */
+  animation: moveBottomLeftToTopRight 14s ease-in-out infinite, pulseGlowFourth 11s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes moveBottomLeftToTopRight {
+  0% {
+    background-position: 0% 100%;
+  }
+  25% {
+    background-position: 25% 75%;
+  }
+  50% {
+    background-position: 100% 0%;
+  }
+  75% {
+    background-position: 75% 25%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
 }
 
 @keyframes moveLight {
@@ -137,6 +170,18 @@ body::after {
     opacity: 0.85;
   }
 }
+
+@keyframes pulseGlowFourth {
+  0%, 100% {
+    background-size: 30vw 70vh;
+    opacity: 1;
+  }
+  50% {
+    background-size: 40vw 90vh;
+    opacity: 0.8;
+  }
+}
+
 .NavBar-container{
     display: flex;
     justify-content: space-around;
@@ -443,10 +488,11 @@ body::after {
 
   .login-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     height: 100vh;
-    padding: 1rem;
+    margin-top: 3em;
+    gap: 2em;
     
   }
   
@@ -541,7 +587,7 @@ body::after {
     font-size: 2.5rem;
     font-weight: 300;
     text-align: center;
-    margin-bottom: 4.8rem;
+    margin-bottom: 4.2rem;
     color: #ffffff;
     background: linear-gradient(90deg, #79eff5, #c0fcec);
     -webkit-background-clip: text;
@@ -992,4 +1038,61 @@ body::after {
 
 .modalImg{
   width: 75%;
+}
+
+.animContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #0FF0FC;
+  font-weight: 100;
+}
+
+.anim{
+  width: 4em;
+}
+
+.welcomeAnim{
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  font-size: 3.9em;
+  font-weight: 300;
+  letter-spacing: -1px;
+  line-height: 1.2;
+  text-align: center;
+  margin: 100px 0 40px;
+  background: linear-gradient(90deg, #83D5EC 0%, #A288D3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text; /* standard */
+  color: transparent;
+}
+
+.toolTipChart{
+  background: rgba(43, 43, 43, 0.638); /* translucent white */
+  backdrop-filter: blur(12px);           /* this adds the blur */
+  -webkit-backdrop-filter: blur(12px);   /* for Safari */
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.25); /* gives depth */
+  padding: 0.7em;
+  border-radius: 0.4em;
+}
+
+.buttonHolder{
+  margin-top: 1.5em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
+}
+
+.smooth-container {
+  transition: all 1.4s ease-in-out;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }

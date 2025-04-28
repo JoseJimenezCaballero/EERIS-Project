@@ -3,9 +3,10 @@ import { useUser } from './UserContext';
 import NavBar from './NavBar';
 import BudgetWheel from './BudgetWheel';
 import '../styles.css';
-import { Calendar, Building2, CircleDollarSign, Rows3, Pencil, CircleCheck, CircleSlash } from 'lucide-react';
+import { Calendar, Building2, CircleDollarSign, Rows3, Pencil, CircleCheck, CircleSlash, ArrowLeft } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import CustomPieChart from './CustomPieChart';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const HomePage = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const location = useLocation();
+  const [displayTrans, setDisplayTrans] = useState(false);
 
   const fetchBudgetInfo = async () => {
     try {
@@ -186,16 +188,48 @@ const HomePage = () => {
       </>
     );
   }
+
+  //used to aggregate data to feed to customPieChart which needs data like this: {category:'xxx', amount:xx}
+  const aggregatedCategoryData = transactions.reduce((acc, txn) => {
+    const category = txn.category || "Uncategorized"; 
+    const found = acc.find(item => item.name === category);
+    if (found) {
+      found.value += txn.amount;
+    } else {
+      acc.push({ name: category, value: txn.amount });
+    }
+    return acc;
+  }, []);
+
 console.log(transactions)
   return (
     <>
       <NavBar />
       <div className="home-container">
-        <h1 className="home-title">Hello {name}</h1>
+        <h1 className="home-title" >Hello {name}</h1>
         <div className="home-main">
           <div className="home-transactions">
-            <h3 style={{ fontWeight: "300", fontSize: "1.3em" }}>Recent Transactions</h3>
-            <div className="table-container">
+            <h3 style={{ fontWeight: "300", fontSize: "1.3em" }}>{!displayTrans ? 'Recent Transactions' : 'Spending Summary'}</h3>
+            <AnimatePresence mode="wait">
+              <div className="smooth-container">
+            {displayTrans ? (
+            <motion.div
+              key="chart"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+            >
+              <CustomPieChart data={aggregatedCategoryData} />
+            </motion.div>
+          ) : <motion.div 
+              className="table-container"
+              key="table"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 30 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              >
               <table className="home-table">
                 <thead>
                   <tr>
@@ -237,9 +271,21 @@ console.log(transactions)
                   )}
                 </tbody>
               </table>
+            </motion.div>}
             </div>
-            <div style={{ marginTop: "1.5em" }} className="submit-button" onClick={() => handleNavigation('/receipts')}>
-              Submit New Transaction
+            </AnimatePresence>
+            <div className="buttonHolder">
+              {!displayTrans &&
+                <div className="submit-button" onClick={() => handleNavigation('/receipts')}>
+                Submit New Transaction
+              </div>}
+              <div 
+                style={{textAlign:'center', display:'flex', alignItems:"center"}} 
+                className="submit-button" 
+                onClick={() => setDisplayTrans(!displayTrans)}
+                >
+                {displayTrans ? (<><ArrowLeft style={{height:"1.2em"}} /> Back</>) :'Spending Breakdown'}
+              </div>
             </div>
           </div>
           <div className="home-budget">
