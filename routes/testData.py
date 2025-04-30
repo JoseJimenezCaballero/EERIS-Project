@@ -140,10 +140,152 @@ transactions = [
         "date": "2025-04-14",
         "business": "UPS",
         "category": "Shipping"
-    }
+    },
+    
 ]
 
 for t in transactions:
     add_transaction(t)
+
+# ✅ Additional Receipts for Jose Jimenez
+extra_receipts = [
+    {
+        "owner": "jose@example.com",
+        "receipt_id": "R2001",
+        "merchant": "Chipotle",
+        "amount": 15.75,
+        "date": "2025-04-20",
+        "status": "approved"
+    },
+    {
+        "owner": "jose@example.com",
+        "receipt_id": "R2002",
+        "merchant": "Target",
+        "amount": 60.00,
+        "date": "2025-04-21",
+        "status": "approved"
+    },
+    {
+        "owner": "jose@example.com",
+        "receipt_id": "R2003",
+        "merchant": "Office Depot",
+        "amount": 30.50,
+        "date": "2025-04-22",
+        "status": "approved"
+    },
+    {
+        "owner": "jose@example.com",
+        "receipt_id": "R2004",
+        "merchant": "GitHub",
+        "amount": 9.00,
+        "date": "2025-04-23",
+        "status": "approved"
+    },
+    {
+        "owner": "jose@example.com",
+        "receipt_id": "R2005",
+        "merchant": "AT&T",
+        "amount": 85.99,
+        "date": "2025-04-24",
+        "status": "approved"
+    },
+    {
+        "owner": "jose@example.com",
+        "receipt_id": "R2006",
+        "merchant": "McDonald's",
+        "amount": 10.49,
+        "date": "2025-04-25",
+        "status": "pending"
+    },
+    {
+        "owner": "jose@example.com",
+        "receipt_id": "R2007",
+        "merchant": "Amazon",
+        "amount": 45.00,
+        "date": "2025-04-26",
+        "status": "pending"
+    }
+]
+
+for r in extra_receipts:
+    add_receipt(r)
+
+# ✅ Additional Transactions for Jose Jimenez
+extra_transactions = [
+    {
+        "receipt_id": "R2001",
+        "employee": "jose@example.com",
+        "amount": 15.75,
+        "status": "approved",
+        "department": "Engineering",
+        "date": "2025-04-20",
+        "business": "Chipotle",
+        "category": "Food"
+    },
+    {
+        "receipt_id": "R2002",
+        "employee": "jose@example.com",
+        "amount": 60.00,
+        "status": "approved",
+        "department": "Engineering",
+        "date": "2025-04-21",
+        "business": "Target",
+        "category": "Merchandise"
+    },
+    {
+        "receipt_id": "R2003",
+        "employee": "jose@example.com",
+        "amount": 30.50,
+        "status": "approved",
+        "department": "Engineering",
+        "date": "2025-04-22",
+        "business": "Office Depot",
+        "category": "Supplies"
+    },
+    {
+        "receipt_id": "R2004",
+        "employee": "jose@example.com",
+        "amount": 9.00,
+        "status": "approved",
+        "department": "Engineering",
+        "date": "2025-04-23",
+        "business": "GitHub",
+        "category": "Software"
+    },
+    {
+        "receipt_id": "R2005",
+        "employee": "jose@example.com",
+        "amount": 85.99,
+        "status": "approved",
+        "department": "Engineering",
+        "date": "2025-04-24",
+        "business": "AT&T",
+        "category": "Bills"
+    },
+    {
+        "receipt_id": "R2006",
+        "employee": "jose@example.com",
+        "amount": 10.49,
+        "status": "pending",
+        "department": "Engineering",
+        "date": "2025-04-25",
+        "business": "McDonald's",
+        "category": "Food"
+    },
+    {
+        "receipt_id": "R2007",
+        "employee": "jose@example.com",
+        "amount": 45.00,
+        "status": "pending",
+        "department": "Engineering",
+        "date": "2025-04-26",
+        "business": "Amazon",
+        "category": "Merchandise"
+    }
+]
+
+for t in extra_transactions:
+    add_transaction(t)
+
 
 print("✅ Test data successfully inserted for HR, Manager, Employees, Budgets, Receipts, and Transactions.")
